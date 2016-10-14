@@ -84,10 +84,10 @@ public class ProcedureActivity extends AppCompatActivity
     public void onListItemClick(ProcItem item){
         // 操作ボタンが押された
         System.out.println("CLICK!:"+item.tx_sno);
-        Intent intent = new Intent(this,OperationActivity.class);
+        //Intent intent = new Intent(this,OperationActivity.class);
         //startActivity(intent);
         //fragment.test();
-        setProcActivate();
+        //setProcActivate();
     }
 
     private void setProcActivate(){
@@ -124,6 +124,7 @@ public class ProcedureActivity extends AppCompatActivity
 
                 Bundle bdCur = new Bundle();
 
+                bdCur.putString("in_sno", item.get(0).in_sno);
                 bdCur.putString("tx_sno", item.get(0).tx_sno);
                 bdCur.putString("tx_s_l", item.get(0).tx_s_l);
                 bdCur.putString("tx_action", item.get(0).tx_action);
@@ -136,6 +137,7 @@ public class ProcedureActivity extends AppCompatActivity
 
                 Bundle bdPair = new Bundle();
 
+                bdPair.putString("in_sno", item.get(1).in_sno);
                 bdPair.putString("tx_sno", item.get(1).tx_sno);
                 bdPair.putString("tx_s_l", item.get(1).tx_s_l);
                 bdPair.putString("tx_action", item.get(1).tx_action);
