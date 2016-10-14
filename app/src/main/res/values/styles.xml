@@ -1,0 +1,21 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppDefault" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:background">@color/colorBackgroudDefault</item>
+    </style>
+
+    <style name="AppWait" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:background">@color/colorBackgroudWait</item>
+    </style>
+
+    <!--K-01 指示待ち画面 -->
+
+</resources>

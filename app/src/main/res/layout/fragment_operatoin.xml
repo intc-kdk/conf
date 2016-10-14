@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="130dp"
+    android:orientation="horizontal"
+    android:background="@color/colorBackgroudDefault">
+
+    <TextView
+        android:id="@+id/proc_number"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:width="50dp"
+        android:textAlignment="center"
+        android:text="1"
+        android:textSize="25sp"
+        android:gravity="center_vertical" />
+
+    <TextView
+        android:id="@+id/action_before"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:width="315dp"
+        android:textAlignment="center"
+        android:gravity="center_vertical"
+        android:textColor="@color/colorText"
+        android:text="【1号】#43E1・#43R1 自動遠方"
+        android:textSize="30sp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp" />
+
+    <ImageView
+        android:layout_height="match_parent"
+        app:srcCompat="@drawable/arrow"
+        android:id="@+id/imageView"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_width="115dp" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:id="@+id/action_after"
+        android:layout_weight="1"
+        android:width="315dp"
+        android:textAlignment="center"
+        android:gravity="center_vertical"
+        android:textSize="30sp"
+        android:textColor="@color/colorText"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp" />
+</LinearLayout>

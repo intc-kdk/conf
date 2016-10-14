@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_procedure"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="0dp"
+    android:paddingLeft="0dp"
+    android:paddingRight="0dp"
+    android:paddingTop="0dp"
+    tools:context="com.intc_service.confrimationapp.ProcedureActivity"
+    tools:background="@color/colorBackgroudDefault">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="0dp"
+        android:layout_alignParentStart="true"
+        android:weightSum="1"
+        android:background="@color/colorBackgroudDefault">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="250dp">
+
+            <Button
+                android:text="現場差異"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/button"
+                android:layout_gravity="right"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:width="70dp"
+                android:textSize="30sp"
+                android:height="80dp"
+                android:textColor="#cccccc"
+                android:background="@drawable/bg_diff_off" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#ffcc00"
+                android:layout_marginTop="35dp">
+
+                <TextView
+                    android:text="TextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:id="@+id/title_proc_no"
+                    android:height="100dp"
+                    android:width="92dp"
+                    android:textSize="25sp"
+                    android:textAlignment="center"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="15dp"
+                    android:textColor="@android:color/black" />
+
+                <TextView
+                    android:text="TextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:id="@+id/title_proc_place"
+                    android:height="100dp"
+                    android:width="420dp"
+                    android:textSize="25sp"
+                    android:textAlignment="center"
+                    android:gravity="center_vertical"
+                    android:textColor="@android:color/black" />
+
+                <TextView
+                    android:text="TextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:id="@+id/title_proc_action"
+                    android:layout_weight="1"
+                    android:height="100dp"
+                    android:textSize="25sp"
+                    android:textAlignment="center"
+                    android:gravity="center_vertical"
+                    android:width="288dp"
+                    android:textColor="@android:color/black" />
+
+            </LinearLayout>
+
+            <TextView
+                android:text="TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/title_proc_remarks"
+                android:width="1000dp"
+                android:height="100dp"
+                android:background="#ffcc00"
+                android:layout_gravity="bottom"
+                android:textSize="25sp"
+                android:textColor="@android:color/black"
+                android:gravity="center_vertical"
+                android:textAlignment="center" />
+        </FrameLayout>
+
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:background="@color/colorBackgroudDefault"
+            android:layout_gravity="center"
+            android:id="@+id/LoadAction"
+            android:paddingTop="10dp"
+            android:layout_height="795dp">
+
+            <fragment
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/OperetionList"
+                tools:layout="@layout/fragment_operation_list"
+                android:name="com.intc_service.confrimationapp.OperationFragment" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="107dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView8"
+                android:layout_weight="1"
+                android:background="@android:color/background_light"
+                android:height="100dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:textColor="#ff0000"
+                android:textSize="36sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>
