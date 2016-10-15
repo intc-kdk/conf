@@ -56,11 +56,9 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
     public void onBindViewHolder(final ViewHolder holder, int position) {
         switch (getItemViewType(position)) {
             case 0:
-                //Log.d("onBindViewHolder",  "viewType: 1 position: " + position);
                 ((ProcedureViewHolder)holder).onBindItemViewHolder(mValues.get(position));
                 break;
             case 1:
-                //Log.d("onBindViewHolder",  "viewType: 2 position: " + position);
                 ((CommentViewHolder)holder).onBindItemViewHolder(mValues.get(position));
                 break;
         }
@@ -68,12 +66,13 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
 
     // 操作ボタンクリック
     private void onButtonClick(View v, int position){
-
+        // Activity へ通知
         mListener.onListItemClick(mValues.get(position));
-
+        /*
         Resources res = v.getResources();
         int lockColor = res.getColor(R.color.colorYellowButton);
         v.setBackgroundColor(lockColor);
+        */
     }
 
     @Override
@@ -87,6 +86,7 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
         }
     }
 
+    /* 通常操作の ViewHolder*/
     public class ProcedureViewHolder extends ViewHolder implements View.OnClickListener {
         public final View mView;
         public final TextView mNumberView;
@@ -106,7 +106,7 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
             mRemarksView = (TextView) view.findViewById(R.id.proc_remarks);
 
             mAdapter = adapter;
-            mOperationView.setOnClickListener(this);
+            mOperationView.setOnClickListener(this);  //  操作ボタンにリスナー設定
 
         }
         public void onClick(View view){
@@ -119,36 +119,42 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
         }
 
         private int getColorInt(String code){
+            //  色指定（16進 から 10進）
             int color = Color.rgb(
                     Integer.valueOf( code.substring( 0, 2 ), 16 ),
                     Integer.valueOf( code.substring( 2, 4 ), 16 ),
                     Integer.valueOf( code.substring( 3, 6 ), 16 ) );
             return color;
         }
+
         public void onBindItemViewHolder(final ProcItem data) {
 
             this.mItem = data;
             this.mNumberView.setText(data.tx_sno);
             this.mPlaceView.setText(data.tx_s_l);
             this.mOperationView.setText(data.tx_action);
-            //this.mRemarksView.setText(data.tx_bname);
 
             Resources res = this.mView.getResources();
-            int bgColor;
-            int btnColor;
-            if(data.cd_status.equals("1")){
+            int bgColor = res.getColor(R.color.colorBackgroudDefault);   // 行の背景色
+            int btnColor = res.getColor(R.color.colorInstructButton);    // 操作ボタンの背景色
+            int bgPlaceColor = res.getColor(R.color.colorBoardEquipmentText);  // 盤名の背景色
+            int txtColor= res.getColor(R.color.colorTextBlack);             // 操作ボタンの文字色
+            if(data.cd_status.equals("1")){   // 実行中の時
                 bgColor = res.getColor(R.color.colorYellowButton);
-            }else {
-                bgColor = res.getColor(R.color.colorBackgroudDefault);
             }
-            if(data.cd_status.equals("7")){
+            if(data.cd_status.equals("7")){   // 実行終了の時
                 btnColor = getColorInt(data.tx_clr2);
-            }else{
-                btnColor = res.getColor(R.color.colorInstructButton);
+                bgPlaceColor= res.getColor(R.color.colorBoardEquipmentDoneText);
+                //if(data.tx_clr2.equals("FF0000") || data.tx_clr2.equals("0000FF") ){
+                    txtColor = res.getColor(R.color.colorText);
+                //}
             }
 
             this.mView.setBackgroundColor(bgColor);
+            this.mPlaceView.setBackgroundColor(bgPlaceColor);
             this.mOperationView.setBackgroundColor(btnColor);
+            this.mOperationView.setTextColor(txtColor);
+
 
 
             this.mView.setOnClickListener(new View.OnClickListener() {
@@ -164,6 +170,7 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
         }
     }
 
+    /* コメント行のViewHolder */
     public class CommentViewHolder extends ViewHolder {
         public final TextView mComment;
 
@@ -188,10 +195,10 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
         return mValues.get(position);
 
     }
-    public ProcItem getPairItem(String sno, String swno){
+    public ProcItem getPairItem(int sno, String swno){
         System.out.println("getPairItem");
         for(ProcItem item : mValues){
-            if(item.in_swno.equals(swno) && !item.in_sno.equals(sno)){
+            if(item.in_swno.equals(swno) && item.in_sno != sno){
                 return item;
             }
         }

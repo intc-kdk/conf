@@ -10,13 +10,13 @@ import android.os.Bundle;
 public class OperationDataUtil {
 
     public static OpeItem toList(Bundle entry) {
-        return new OpeItem(entry.getString("in_sno"), entry.getString("tx_sno"),entry.getString("tx_b_l"), entry.getString("tx_b_r"), entry.getString("tx_clr1"), entry.getString("tx_clr2"),entry.getString("cd_status"));
+        return new OpeItem(entry.getInt("in_sno"), entry.getString("tx_sno"),entry.getString("tx_b_l"), entry.getString("tx_b_r"), entry.getString("tx_clr1"), entry.getString("tx_clr2"),entry.getString("cd_status"));
     }
     /**
      * 手順書データのクラス
      */
     public static class OpeItem {
-        public final String in_sno;
+        public final int in_sno;
         public final String tx_sno;
         public final String tx_b_l;
         public final String tx_b_r;
@@ -24,7 +24,7 @@ public class OperationDataUtil {
         public final String tx_clr2;
         public String cd_status;
 
-        public OpeItem(String in_sno ,String tx_sno ,String tx_b_l ,String tx_b_r ,String tx_clr1 ,String tx_clr2 ,String cd_status){
+        public OpeItem(int in_sno ,String tx_sno ,String tx_b_l ,String tx_b_r ,String tx_clr1 ,String tx_clr2 ,String cd_status){
             this.in_sno = in_sno;
             this.tx_sno = tx_sno;
             this.tx_b_l = tx_b_l;

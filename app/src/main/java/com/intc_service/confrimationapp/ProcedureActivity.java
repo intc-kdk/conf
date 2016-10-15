@@ -39,7 +39,7 @@ public class ProcedureActivity extends AppCompatActivity
         mProcFragment = (ProcedureFragment)getSupportFragmentManager()
                 .findFragmentById(R.id.ProcedureList);
 
-        // 起動時のみ手順のカレント表示はマニュアル設定
+        // 初回起動時のみ、手順のカレント表示はマニュアル設定
         mProcFragment.setProcStatus(0,"1");
 
         // TransmissionFragment/ReceptionFragment を　生成
@@ -67,8 +67,8 @@ public class ProcedureActivity extends AppCompatActivity
 
     @Override
     public void onListFragmentInteraction(Bundle rcBundle) {
-
-        if(rcBundle.getString("cd_status").equals("1")) {
+        // Fragmentからの通知で、ヘッダの表示を更新する
+        if(rcBundle.getString("cd_status").equals("1")) {   // 状態が実行通の時
             TextView tvNo = (TextView) findViewById(R.id.title_proc_no);
             TextView tvPlace = (TextView) findViewById(R.id.title_proc_place);
             TextView tvAction = (TextView) findViewById(R.id.title_proc_action);
@@ -82,12 +82,8 @@ public class ProcedureActivity extends AppCompatActivity
     }
     @Override
     public void onListItemClick(ProcItem item){
-        // 操作ボタンが押された
+        // 操作ボタンのイベント
         System.out.println("CLICK!:"+item.tx_sno);
-        //Intent intent = new Intent(this,OperationActivity.class);
-        //startActivity(intent);
-        //fragment.test();
-        //setProcActivate();
     }
 
     private void setProcActivate(){
@@ -97,13 +93,13 @@ public class ProcedureActivity extends AppCompatActivity
     @Override
     public void onResponseRecieved(String data)  {
         System.out.println(data);
-
         // TODO: [P] ログを取得
 
     }
 
     @Override
     public void onFinishTransmission(String data){
+        // 送信処理終了
 
     }
 
@@ -124,7 +120,7 @@ public class ProcedureActivity extends AppCompatActivity
 
                 Bundle bdCur = new Bundle();
 
-                bdCur.putString("in_sno", item.get(0).in_sno);
+                bdCur.putInt("in_sno", item.get(0).in_sno);
                 bdCur.putString("tx_sno", item.get(0).tx_sno);
                 bdCur.putString("tx_s_l", item.get(0).tx_s_l);
                 bdCur.putString("tx_action", item.get(0).tx_action);
@@ -137,7 +133,7 @@ public class ProcedureActivity extends AppCompatActivity
 
                 Bundle bdPair = new Bundle();
 
-                bdPair.putString("in_sno", item.get(1).in_sno);
+                bdPair.putInt("in_sno", item.get(1).in_sno);
                 bdPair.putString("tx_sno", item.get(1).tx_sno);
                 bdPair.putString("tx_s_l", item.get(1).tx_s_l);
                 bdPair.putString("tx_action", item.get(1).tx_action);
@@ -163,31 +159,33 @@ public class ProcedureActivity extends AppCompatActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        // 盤操作画面からの戻り
         super.onActivityResult(requestCode, resultCode, data);
 
         if(resultCode != RESULT_OK) return;
-        System.out.println("RESULT OK");
         Bundle resultBundle = data.getExtras();
 
         if(!resultBundle.containsKey("in_sno")) return;
-        System.out.println("RESULT OK!!!!!!!!!!!!!!!!!!!!");
         String status = resultBundle.getString("status");
-        String in_sno = resultBundle.getString("in_sno");
-        System.out.println("in_sno:"+in_sno);
-        System.out.println("status:"+status);
+        int in_sno = resultBundle.getInt("in_sno");
+
         if(requestCode == REQUEST_CODE_OPERATION) {
-            // 盤操作画面からの戻り
             // 該当操作のステータスを更新
             int position = mProcFragment.getCurrentPos();
 
-            System.out.println("position:"+position);
-            System.out.println("status:"+status);
             mProcFragment.setProcStatus(position, status);   // 対象のエントリの更新
 
-            mProcFragment.updateProcedure(); // 次のエントリへ進める
-            // サーバーからの指示を待機
-            recieveFragment.listen();
+            if(mProcFragment.getLastInSno() > in_sno) {
+                mProcFragment.updateProcedure();                 // 次のエントリへ進める
 
+                // サーバーからの指示を待機
+                recieveFragment.listen();
+            }else{
+                // 最終手順の時、終了画面表示
+                Intent intent = new Intent(this,EndActivity.class);
+                startActivity(intent);
+
+            }
 
         }
     }

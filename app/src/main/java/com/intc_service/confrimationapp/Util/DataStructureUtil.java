@@ -190,7 +190,7 @@ public class DataStructureUtil {
      * 手順書データのクラス
     */
     public static class ProcItem {
-        public final String in_sno;
+        public final int in_sno;
         public final String in_swno;
         public final String tx_sno;
         public final String tx_basho;
@@ -212,7 +212,7 @@ public class DataStructureUtil {
         public final String bo_gs;
 
         public ProcItem(String in_sno ,String in_swno ,String tx_sno ,String tx_basho , String tx_bname ,String tx_swname ,String tx_action ,String tx_biko ,String dotime ,String tx_gs ,String tx_com ,String tx_s_l ,String tx_s_r ,String tx_b_l ,String tx_b_r ,String tx_clr1 ,String tx_clr2 ,String ts_b ,String cd_status ,String bo_gs){
-            this.in_sno = in_sno;
+            this.in_sno = Integer.parseInt(in_sno);
             this.in_swno = in_swno;
             this.tx_sno = tx_sno;
             this.tx_basho = tx_basho;

@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -103,9 +104,12 @@ public class ReceptionFragment extends Fragment {
             protected String doInBackground(Void... voids) {
                 String message = "";
                 try{
-                    mServer = new ServerSocket(mPort);
-                    mServer.setReuseAddress(true);
-                    mSocket = mServer.accept();
+                    if(mServer == null) {
+                        mServer = new ServerSocket();
+
+                        mServer.setReuseAddress(true);
+                        mServer.bind(new InetSocketAddress(mPort));
+                    }mSocket = mServer.accept();
                     reader = new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
                     writer = new BufferedWriter(new OutputStreamWriter(mSocket.getOutputStream()));
 

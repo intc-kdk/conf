@@ -14,4 +14,6 @@
     <color name="colorBoardEquipmentText">#99ccff</color>
     <color name="colorInstructButton">#99ffff</color>
     <color name="colorButtonBlue">#0000ff</color>
+    <color name="colorTextBlack">#000000</color>
+    <color name="colorBoardEquipmentDoneText">#66ffcc</color>
 </resources>

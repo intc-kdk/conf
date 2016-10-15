@@ -78,10 +78,12 @@ public class OperationRecyclerViewAdapter extends RecyclerView.Adapter<Operation
     // 操作ボタン(右）クリック
     private void onButtonClick(View v, int position){
 
-        System.out.println("Adapter in_sno:"+mValues.get(position).in_sno);
-        System.out.println("Adapter tx_sno:"+mValues.get(position).tx_sno);
-
-        mListener.onListItemClick(mValues.get(position));
+        // 対象の操作の時のみ、Activityへ通知
+        if(mValues.get(position).cd_status.equals("1")) {
+            System.out.println("Adapter in_sno:" + mValues.get(position).in_sno);
+            System.out.println("Adapter tx_sno:" + mValues.get(position).tx_sno);
+            mListener.onListItemClick(mValues.get(position));
+        }
     }
     @Override
     public int getItemCount() {
@@ -105,7 +107,7 @@ public class OperationRecyclerViewAdapter extends RecyclerView.Adapter<Operation
             mAfterView = (TextView) view.findViewById(R.id.action_after);
 
             mAdapter = adapter;
-            mAfterView.setOnClickListener(this);
+            mAfterView.setOnClickListener(this);  // 操作ボタン（右）へのリスナー設定
         }
         public void onClick(View view){
 

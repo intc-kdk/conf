@@ -9,19 +9,33 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.intc_service.confrimationapp.EndActivity"
-    android:theme="@style/AppWait">
+    android:theme="@style/AppDefault"
+    android:background="@color/colorBackgroudDefault">
 
     <TextView
-        android:text="電源をOFFにしてください"
+        android:text="全ての手順を終了しました"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView"
+        android:textAlignment="center"
+        android:textSize="50sp"
+        android:textColor="@color/colorText"
+        android:layout_marginBottom="170dp"
+        android:layout_above="@+id/textView4"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:text="タブレットの電源を OFFにしてください"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textView4"
-        android:textSize="55sp"
+        android:textSize="50sp"
         android:textColor="#ffffff"
-        android:width="700dp"
+        android:width="600dp"
         android:gravity="center"
         android:lineSpacingMultiplier="1.5"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_marginBottom="380dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/textView" />
 
 </RelativeLayout>

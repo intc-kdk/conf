@@ -11,11 +11,11 @@
         android:layout_height="match_parent"
         android:layout_margin="5dp"
         android:textAppearance="?attr/textAppearanceListItem"
-        tools:text="1"
         android:gravity="center_vertical"
         android:textSize="30sp"
         android:layout_weight="31.71"
         android:layout_width="790dp"
-        android:textColor="@color/colorText" />
+        android:textColor="@color/colorText"
+        android:text="１１１１１１１１" />
 
 </LinearLayout>

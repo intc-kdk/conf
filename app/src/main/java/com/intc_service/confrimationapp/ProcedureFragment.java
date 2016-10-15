@@ -13,8 +13,10 @@ import android.view.ViewGroup;
 
 import com.intc_service.confrimationapp.Util.DataStructureUtil;
 import com.intc_service.confrimationapp.Util.DataStructureUtil.ProcItem;
+import com.intc_service.confrimationapp.Util.ProcedureComparator;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -25,12 +27,10 @@ import java.util.List;
  */
 public class ProcedureFragment extends Fragment {
 
-    // TODO: Customize parameter argument names
-    private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
     private int mColumnCount = 1;
 
     private int mCurrentPos = 0;
+    private int mLastInSno = 0;
     private OnListFragmentInteractionListener mListener;
     private ProcedureRecyclerViewAdapter mRecyclerViewAdapter;
     private List<ProcItem> mItems;
@@ -58,13 +58,14 @@ public class ProcedureFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        // 手順データを取得
+        // 手順データをIntentから取得
         Intent intent = getActivity().getIntent();
         String resultSt = intent.getStringExtra("proc");
 
+        // 手順データを解析し、tejunを取り出す
         DataStructureUtil dsHelper = new DataStructureUtil();
         String cmd = dsHelper.setRecievedData(resultSt);
-        Bundle tmpBundle = dsHelper.getRecievedData(); // 渡したデータを解析し、tejunを取り出す
+        Bundle tmpBundle = dsHelper.getRecievedData();
 
         View view = inflater.inflate(R.layout.fragment_procedure_list, container, false);
 
@@ -83,7 +84,9 @@ public class ProcedureFragment extends Fragment {
             mRecyclerViewAdapter = (ProcedureRecyclerViewAdapter)recyclerView.getAdapter();
             mItems = dsHelper.ITEMS;
         }
-        //setProcStatus(0,"1");
+        int last = dsHelper.ITEMS.size()-1;
+        mLastInSno = dsHelper.ITEMS.get(last).in_sno;
+        System.out.println("mLastInSno:"+mLastInSno);
         return view;
     }
 
@@ -105,28 +108,17 @@ public class ProcedureFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnListFragmentInteractionListener {
-
-        void onListFragmentInteraction(Bundle bundle);
-        void onListItemClick(ProcItem item);
-    }
     public int getCurrentPos(){
+        // 現在の手順の位置を取得する
         return mCurrentPos;
-
     }
-    public void setProcStatus(int pos, String status){
+    public int getLastInSno(){
+        // 最終手順の in_sno を取得する
+        return mLastInSno;
+    }
 
-        // 対象の指示を取得
+    public void setProcStatus(int pos, String status){
+        // ヘッダーに表示するため、対象の指示をActivityへ通知
         mRecyclerViewAdapter.setActivate(pos,status);
         Bundle rcBundle = new Bundle();
         rcBundle.putString("tx_sno",mItems.get(pos).tx_sno);
@@ -137,11 +129,11 @@ public class ProcedureFragment extends Fragment {
         rcBundle.putString("tx_biko",mItems.get(pos).tx_biko);
         rcBundle.putString("cd_status",mItems.get(pos).cd_status);
 
-
         ((OnListFragmentInteractionListener)getActivity()).onListFragmentInteraction(rcBundle);
 
     }
     public void updateProcedure(){
+        // 次の手順へ進める
         int nextPos = mCurrentPos + 1;
 
         if(mItems.get(nextPos).tx_sno.equals("C")){
@@ -149,24 +141,17 @@ public class ProcedureFragment extends Fragment {
         }
         // 対象の指示を更新
         mItems.get(nextPos).cd_status="1";
-        mRecyclerViewAdapter.setActivate(nextPos,mItems.get(nextPos).cd_status);
 
-        Bundle rcBundle = new Bundle();
-        rcBundle.putString("tx_sno",mItems.get(nextPos).tx_sno);
-        rcBundle.putString("tx_s_l",mItems.get(nextPos).tx_s_l);
-        rcBundle.putString("tx_action",mItems.get(nextPos).tx_action);
-        rcBundle.putString("tx_b_l",mItems.get(nextPos).tx_b_l);
-        rcBundle.putString("tx_action",mItems.get(nextPos).tx_action);
-        rcBundle.putString("tx_biko",mItems.get(nextPos).tx_biko);
-        rcBundle.putString("cd_status",mItems.get(nextPos).cd_status);
+        // 次の手順を Activityへ通知
+        setProcStatus(nextPos, mItems.get(nextPos).cd_status);
 
+        // RecyclerViewを更新
         mCurrentPos=nextPos;
         mRecyclerViewAdapter.notifyDataSetChanged();
-        ((OnListFragmentInteractionListener)getActivity()).onListFragmentInteraction(rcBundle);
-
     }
-    public List<ProcItem> getCurrentProcedure()
-    {
+    public List<ProcItem> getCurrentProcedure() {
+        // 現在実行中の手順とその対の手順を取得
+
         List<ProcItem> arrProc = new ArrayList<>();;
 
         ProcItem data = mRecyclerViewAdapter.getItem(mCurrentPos);
@@ -174,11 +159,18 @@ public class ProcedureFragment extends Fragment {
         arrProc.add(data);
         arrProc.add(mRecyclerViewAdapter.getPairItem(data.in_sno, data.in_swno));
 
+        //  in_sno でソート
+        Collections.sort(arrProc, new ProcedureComparator());
         return arrProc;
     }
 
-    /*
-    RecycerView recyclerView = (RecyclerView)findViewById(R.id.your_recyclerview);
-YourViewHolder viewHolder = (YourViewHolder)recyclerView.findViewHolderForAdapterPosition(position);
-    * */
+    /**
+     リスナー
+     */
+    public interface OnListFragmentInteractionListener {
+
+        void onListFragmentInteraction(Bundle bundle);
+        void onListItemClick(ProcItem item);
+    }
+
 }

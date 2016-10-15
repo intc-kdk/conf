@@ -32,6 +32,8 @@ public class OperationActivity extends AppCompatActivity
     private ReceptionFragment recieveFragment;
     private ProcedureFragment mProcFragment;
 
+    private int returnSno = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,8 +86,10 @@ public class OperationActivity extends AppCompatActivity
         System.out.println(data);
 
         // TODO: [P] ログを取得
+
         Intent intent = new Intent(this,OperationActivity.class);
-        intent.putExtra("in_sno","1");
+
+        intent.putExtra("in_sno",returnSno);
         intent.putExtra("status","7");
         setResult(RESULT_OK, intent);
         finish();
@@ -102,7 +106,10 @@ public class OperationActivity extends AppCompatActivity
 
         // TODO: コマンド[22]送信
         DataStructureUtil ds = new DataStructureUtil();
-        String mData = ds.makeSendData("22","{\"手順書番号\":\""+item.in_sno+"\"}");
+        String mData = ds.makeSendData("22","{\"手順書番号\":\""+String.valueOf(item.in_sno)+"\"}");
+
+        returnSno = item.in_sno;
+
         sendFragment.send(mData);
         //  TODO: 手順一覧へ渡すデータ作成
 
