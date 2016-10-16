@@ -40,7 +40,7 @@ public class ProcedureActivity extends AppCompatActivity
                 .findFragmentById(R.id.ProcedureList);
 
         // 初回起動時のみ、手順のカレント表示はマニュアル設定
-        mProcFragment.setProcStatus(0,"1");
+        mProcFragment.setFirstProcedure();
 
         // TransmissionFragment/ReceptionFragment を　生成
         sendFragment = TransmissionFragment.newInstance();

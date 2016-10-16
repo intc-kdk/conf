@@ -17,8 +17,6 @@
         android:layout_width="790dp"
         android:textColor="@color/colorText"
         android:text="１１１１１１１１"
-        android:minHeight="100dp"
-        android:paddingTop="15dp"
-        android:paddingBottom="15dp" />
+        android:minHeight="100dp" />
 
 </LinearLayout>

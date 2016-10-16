@@ -85,8 +85,10 @@ public class ProcedureFragment extends Fragment {
             mItems = dsHelper.ITEMS;
         }
         int last = dsHelper.ITEMS.size()-1;
-        mLastInSno = dsHelper.ITEMS.get(last).in_sno;
-        System.out.println("mLastInSno:"+mLastInSno);
+
+        // TODO: コメントではない最終行を取得する
+        mLastInSno = getLastPorcedure();
+        System.out.println("LAST IN SNO:"+mLastInSno);
         return view;
     }
 
@@ -115,6 +117,31 @@ public class ProcedureFragment extends Fragment {
     public int getLastInSno(){
         // 最終手順の in_sno を取得する
         return mLastInSno;
+    }
+
+    public void setFirstProcedure(){
+        int pos = 0;
+
+        // コメント行を無視して、最初の手順を取得する
+        while(mItems.get(pos).tx_sno.equals("C")){
+            pos++;
+        }
+        mCurrentPos = pos;
+
+        setProcStatus(mCurrentPos, "1");
+    }
+
+    private int getLastPorcedure(){
+        int pos = 0;
+
+        // 手順一覧を逆順にして、最終手順を取得する
+        List<ProcItem> reverse = new ArrayList<ProcItem>(mItems);
+        Collections.reverse(reverse);
+
+        while(reverse.get(pos).tx_sno.equals("C") || reverse.get(pos).tx_sno.equals("")){
+            pos++;
+        }
+        return reverse.get(pos).in_sno;
     }
 
     public void setProcStatus(int pos, String status){
