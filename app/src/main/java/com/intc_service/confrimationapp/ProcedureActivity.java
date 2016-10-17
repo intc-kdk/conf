@@ -188,5 +188,9 @@ public class ProcedureActivity extends AppCompatActivity
 
         }
     }
+    @Override
+    public void onFinishRecieveProgress() {
+        // コマンド送受信後の 次への処理判定
+    }
 
 }

@@ -83,8 +83,7 @@ public class WaitActivity extends AppCompatActivity
 
         if(cmd.equals(CMD61)){ //起動応答
             if(bdRecievedData.getString("format").equals("TEXT")) {
-                //mPanelNo = bdRecievedData.getString("text");  // 画面番号を取得
-                mPanelNo = "1";
+                mPanelNo = bdRecievedData.getString("text");  // 画面番号を取得
             }
 
         }else if (cmd.equals(CMD62)){  // 手順書応答
@@ -94,23 +93,8 @@ public class WaitActivity extends AppCompatActivity
                 mRecieved=true;  // 手順書受信済みを設定
             }
         }
-        if(mPanelNo.equals("0") && mRecieved){
-            // 画面番号が "0:指示待ち画面で、手順書受信済みの時 サーバーからの通知を待つ
-            recieveFragment.listen();
-        }
-        else if(mPanelNo.equals("1") && mRecieved){
-            // 画面番号が "1:手順書画面で、手順書受信済みの時 手順書画面へ
-            Intent intent = new Intent(this, ProcedureActivity.class);
 
-            intent.putExtra("proc", mProcedure);
-            startActivity(intent);
-        }
-        //else if(mPanelNo.equals("1") && !mRecieved){
-        else if(!mRecieved){
-            // 手順書未受信のときは 21を送信
-            String mData = dsHelper.makeSendData("21","");
-            sendFragment.send(mData);
-        }
+        onFinishRecieveProgress();   // 受信状況判定
 
         // TODO: [P] ログを取得
 
@@ -139,6 +123,31 @@ public class WaitActivity extends AppCompatActivity
 
         return "";
     }
+    @Override
+    public void onFinishRecieveProgress(){
+        // 受信状況判定
 
+        DataStructureUtil dsHelper = new DataStructureUtil();
+        //System.out.println(mPanelNo+":"+mRecieved);
+        if(mPanelNo.equals("0") && mRecieved){
+            // 画面番号が "0:指示待ち画面で、手順書受信済みの時 サーバーからの通知を待つ
+            recieveFragment.listen();
+        }
+        else if(mPanelNo.equals("1") && mRecieved){
+            // 画面番号が "1:手順書画面で、手順書受信済みの時 手順書画面へ
 
+            recieveFragment.closeServer();
+            Intent intent = new Intent(this, ProcedureActivity.class);
+
+            intent.putExtra("proc", mProcedure);
+            startActivity(intent);
+        }
+        //else if(mPanelNo.equals("1") && !mRecieved){
+        else if(!mRecieved){
+            // 手順書未受信のときは 21を送信
+            String mData = dsHelper.makeSendData("21","");
+            sendFragment.send(mData);
+        }
+
+    }
 }
