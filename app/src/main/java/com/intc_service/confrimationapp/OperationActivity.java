@@ -83,8 +83,6 @@ public class OperationActivity extends AppCompatActivity
     /* 応答受信 */
     @Override
     public void onResponseRecieved(String data)  {
-        System.out.println(data);
-
         // TODO: [P] ログを取得
 
         Intent intent = new Intent(this,OperationActivity.class);
@@ -101,7 +99,7 @@ public class OperationActivity extends AppCompatActivity
     @Override
     public void onListItemClick(OpeItem item){
         // 操作（右）ボタンが押された
-        System.out.println("CLICK!:"+item.in_sno);
+        //System.out.println("CLICK!:"+item.in_sno);
 
 
         // TODO: コマンド[22]送信

@@ -83,7 +83,7 @@ public class ProcedureActivity extends AppCompatActivity
     @Override
     public void onListItemClick(ProcItem item){
         // 操作ボタンのイベント
-        System.out.println("CLICK!:"+item.tx_sno);
+        //System.out.println("CLICK!:"+item.tx_sno);
     }
 
     private void setProcActivate(){
@@ -92,7 +92,6 @@ public class ProcedureActivity extends AppCompatActivity
     /* 応答受信 */
     @Override
     public void onResponseRecieved(String data)  {
-        System.out.println(data);
         // TODO: [P] ログを取得
 
     }

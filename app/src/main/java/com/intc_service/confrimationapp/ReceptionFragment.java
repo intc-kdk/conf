@@ -123,7 +123,7 @@ public class ReceptionFragment extends Fragment {
                         }
                     }
                     message=builder.toString();
-
+System.out.println("<< サーバーから受信 >>"+message);
                     // Activity へ リクエストを返し、返信データ（response）を受け取る
                     response = ((ReceptionFragmentListener)getActivity()).onRequestRecieved(message);
 
@@ -135,6 +135,7 @@ public class ReceptionFragment extends Fragment {
                         // データが設定されているとき、レスポンス送信
                         writer.write(response);
                         writer.flush();
+System.out.println("<< サーバーへ送信 >>"+response);
                         reader.close();
                         mSocket.close(); //
                     }
@@ -157,7 +158,6 @@ public class ReceptionFragment extends Fragment {
             @Override
             protected void onProgressUpdate(StringBuilder... message){
                 String result = message.toString();
-                System.out.println(message.toString());
             }
             //doInBackGroundの結果を受け取る
             @Override

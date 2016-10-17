@@ -80,8 +80,6 @@ public class OperationRecyclerViewAdapter extends RecyclerView.Adapter<Operation
 
         // 対象の操作の時のみ、Activityへ通知
         if(mValues.get(position).cd_status.equals("1")) {
-            System.out.println("Adapter in_sno:" + mValues.get(position).in_sno);
-            System.out.println("Adapter tx_sno:" + mValues.get(position).tx_sno);
             mListener.onListItemClick(mValues.get(position));
         }
     }

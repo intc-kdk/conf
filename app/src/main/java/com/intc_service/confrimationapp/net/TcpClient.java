@@ -38,7 +38,7 @@ public class TcpClient {
             //リクエスト
             writer.write(mSendData);
             writer.flush();
-
+System.out.println("<< サーバーへ送信 >>"+mSendData);
             //レスポンス
             int result;
             StringBuilder builder = new StringBuilder();
@@ -49,7 +49,7 @@ public class TcpClient {
                 }
             }
             message=builder.toString();
-
+System.out.println("<< サーバーから受信 >>"+message);
         } catch (IOException e) {
             message = "IOException error: " + e.getMessage();
             e.printStackTrace();

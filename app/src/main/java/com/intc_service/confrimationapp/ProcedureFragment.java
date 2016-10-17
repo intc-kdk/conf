@@ -88,7 +88,6 @@ public class ProcedureFragment extends Fragment {
 
         // TODO: コメントではない最終行を取得する
         mLastInSno = getLastPorcedure();
-        System.out.println("LAST IN SNO:"+mLastInSno);
         return view;
     }
 

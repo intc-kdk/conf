@@ -77,7 +77,7 @@ public class WaitActivity extends AppCompatActivity
     @Override
     public void onResponseRecieved(String data)  {
         DataStructureUtil dsHelper = new DataStructureUtil();
-System.out.println(data);
+
         String cmd = (String)dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
         Bundle bdRecievedData = dsHelper.getRecievedData();  // 渡したデータを解析し、Bundleを返す
 
@@ -94,7 +94,6 @@ System.out.println(data);
                 mRecieved=true;  // 手順書受信済みを設定
             }
         }
-System.out.println("mPanelNo:"+mPanelNo+" mRecieved:"+mRecieved);
         if(mPanelNo.equals("0") && mRecieved){
             // 画面番号が "0:指示待ち画面で、手順書受信済みの時 サーバーからの通知を待つ
             recieveFragment.listen();
@@ -110,7 +109,6 @@ System.out.println("mPanelNo:"+mPanelNo+" mRecieved:"+mRecieved);
         else if(!mRecieved){
             // 手順書未受信のときは 21を送信
             String mData = dsHelper.makeSendData("21","");
-            System.out.println("SEND!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:"+mData);
             sendFragment.send(mData);
         }
 

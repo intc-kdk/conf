@@ -71,7 +71,6 @@ public class OperationFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_operation_list, container, false);
-        System.out.println("onCreateViewHolder");
         makeOperatonList();
         // Set the adapter
         if (view instanceof RecyclerView) {

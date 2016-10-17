@@ -196,7 +196,6 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
 
     }
     public ProcItem getPairItem(int sno, String swno){
-        System.out.println("getPairItem");
         for(ProcItem item : mValues){
             if(item.in_swno.equals(swno) && item.in_sno != sno){
                 return item;
