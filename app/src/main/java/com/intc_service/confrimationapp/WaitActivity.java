@@ -114,14 +114,15 @@ public class WaitActivity extends AppCompatActivity
 
         String cmd = dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
         Bundle bdRecievedData = dsHelper.getRecievedData();  // 渡したデータを解析し、Bundleを返す
-
+        String mData = "";
         if(cmd.equals(CMD61)) { //起動応答
             if (bdRecievedData.getString("format").equals("TEXT")) {
                 mPanelNo = bdRecievedData.getString("text");  // 画面番号を取得
+                mData = dsHelper.makeSendData("50","");
             }
         }
 
-        return "";
+        return mData;
     }
     @Override
     public void onFinishRecieveProgress(){

@@ -111,7 +111,7 @@ public class ProcedureActivity extends AppCompatActivity
 
         String cmd = dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
         Bundle bdRecievedData = dsHelper.getRecievedData();  // 渡したデータを解析し、Bundleを返す
-
+        String mData = "";
         if(cmd.equals("63")) { //指示命令
             if (bdRecievedData.getString("format").equals("TEXT")) {
                 // 操作対象を取得
@@ -151,9 +151,11 @@ public class ProcedureActivity extends AppCompatActivity
 
                 //盤操作画面を起動
                 startActivityForResult(intent, REQUEST_CODE_OPERATION);
+
+                mData = dsHelper.makeSendData("50","");
             }
         }
-        return "";
+        return mData;
     }
 
     @Override
