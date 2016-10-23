@@ -173,9 +173,9 @@ public class ProcedureActivity extends AppCompatActivity
             int position = mProcFragment.getCurrentPos();
 
             mProcFragment.setProcStatus(position, status);   // 対象のエントリの更新
-            mProcFragment.updateProcedure();                 // 次のエントリへ進める
+
             if(mProcFragment.getLastInSno() > in_sno) {
-                //mProcFragment.updateProcedure();                 // 次のエントリへ進める
+                mProcFragment.updateProcedure();                 // 次のエントリへ進める
 
                 // サーバーからの指示を待機
                 recieveFragment.listen();
@@ -183,7 +183,7 @@ public class ProcedureActivity extends AppCompatActivity
 
                 // 最終手順の時、終了画面表示
                 Intent intent = new Intent(this,EndActivity.class);
-                //startActivity(intent);
+                startActivity(intent);
 
             }
 
