@@ -92,7 +92,7 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
         public final TextView mNumberView;
         public final TextView mPlaceView;
         public final TextView mOperationView;
-        public final TextView mRemarksView;
+        public TextView mRemarksView;
         public ProcItem mItem;
 
         private ProcedureRecyclerViewAdapter mAdapter;
@@ -127,12 +127,22 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
             return color;
         }
 
+        private String getHhmm(String time){
+            //  HHMMのみ抽出
+            String rc="";
+            if(time.length() > 0 ) {
+                String[] arrTime = time.split(":");
+                rc = arrTime[0] + ":" + arrTime[1];
+            }
+            return rc;
+        }
         public void onBindItemViewHolder(final ProcItem data) {
 
             this.mItem = data;
             this.mNumberView.setText(data.tx_sno);
             this.mPlaceView.setText(data.tx_s_l);
             this.mOperationView.setText(data.tx_action);
+            this.mRemarksView.setText(getHhmm(data.ts_b));
 
             Resources res = this.mView.getResources();
             int bgColor = res.getColor(R.color.colorBackgroudDefault);   // 行の背景色
@@ -184,10 +194,11 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
         }
     }
 
-    public void setActivate(int position, String status){
+    public void setActivate(int position, String status, String ts_b){
         // 該当の手順の状態を更新する
 
         mValues.get(position).cd_status = status;
+        mValues.get(position).ts_b = ts_b;
 
     }
     public ProcItem getItem(int position){

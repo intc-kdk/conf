@@ -167,12 +167,13 @@ public class ProcedureActivity extends AppCompatActivity
         if(!resultBundle.containsKey("in_sno")) return;
         String status = resultBundle.getString("status");
         int in_sno = resultBundle.getInt("in_sno");
+        String ts_b = resultBundle.getString("ts_b");
 
         if(requestCode == REQUEST_CODE_OPERATION) {
             // 該当操作のステータスを更新
             int position = mProcFragment.getCurrentPos();
 
-            mProcFragment.setProcStatus(position, status);   // 対象のエントリの更新
+            mProcFragment.setProcStatus(position, status, ts_b);   // 対象のエントリの更新
 
             if(mProcFragment.getLastInSno() > in_sno) {
                 mProcFragment.updateProcedure();                 // 次のエントリへ進める

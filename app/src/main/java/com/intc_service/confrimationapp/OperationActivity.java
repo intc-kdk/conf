@@ -83,14 +83,29 @@ public class OperationActivity extends AppCompatActivity
     /* 応答受信 */
     @Override
     public void onResponseRecieved(String data)  {
+        DataStructureUtil dsHelper = new DataStructureUtil();
+
+        String cmd = (String)dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
+        Bundle bdRecievedData = dsHelper.getRecievedData();  // 渡したデータを解析し、Bundleを返す
+        // コマンド[22]応答受信
+        if(cmd.equals("60")) {
+
+            String date = bdRecievedData.getString("ts_b");
+            String[] arrDate = date.split(" ");
+
+            Intent intent = new Intent(this,OperationActivity.class);
+
+            intent.putExtra("in_sno",returnSno);
+            intent.putExtra("ts_b",arrDate[1]);
+            intent.putExtra("status","7");
+            setResult(RESULT_OK, intent);
+            finish();
+        }
+
+
         // TODO: [P] ログを取得
 
-        Intent intent = new Intent(this,OperationActivity.class);
 
-        intent.putExtra("in_sno",returnSno);
-        intent.putExtra("status","7");
-        setResult(RESULT_OK, intent);
-        finish();
     }
     @Override
     public void onFinishTransmission(String data){
@@ -101,8 +116,7 @@ public class OperationActivity extends AppCompatActivity
         // 操作（右）ボタンが押された
         //System.out.println("CLICK!:"+item.in_sno);
 
-
-        // TODO: コマンド[22]送信
+        // コマンド[22]送信
         DataStructureUtil ds = new DataStructureUtil();
         String mData = ds.makeSendData("22","{\"手順書番号\":\""+String.valueOf(item.in_sno)+"\"}");
 
