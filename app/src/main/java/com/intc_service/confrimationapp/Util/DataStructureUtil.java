@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 
 public class DataStructureUtil {
 
-    private static final String FORMAT = "^(\\d{2})@(.*)\\$$";
+    private static final String FORMAT = "^([0-9A-Z]{2})@(.*)\\$$";
     private static final String JSON_FORMAT = "^\\{(.*)\\}$";
     private static final String DELIMITER = "@";
     private static final String TRAILER = "$";
@@ -199,7 +199,7 @@ public class DataStructureUtil {
         public final String tx_action;
         public final String tx_biko;
         public final String dotime;
-        public final String tx_gs;
+        public String tx_gs;
         public final String tx_com;
         public final String tx_s_l;
         public final String tx_s_r;
@@ -209,7 +209,7 @@ public class DataStructureUtil {
         public final String tx_clr2;
         public String ts_b;
         public String cd_status;
-        public final String bo_gs;
+        public String bo_gs;
 
         public ProcItem(String in_sno ,String in_swno ,String tx_sno ,String tx_basho , String tx_bname ,String tx_swname ,String tx_action ,String tx_biko ,String dotime ,String tx_gs ,String tx_com ,String tx_s_l ,String tx_s_r ,String tx_b_l ,String tx_b_r ,String tx_clr1 ,String tx_clr2 ,String ts_b ,String cd_status ,String bo_gs){
             this.in_sno = Integer.parseInt(in_sno);

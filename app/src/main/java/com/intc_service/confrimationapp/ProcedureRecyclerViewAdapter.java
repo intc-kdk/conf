@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.intc_service.confrimationapp.ProcedureFragment.OnListFragmentInteractionListener;
@@ -15,6 +16,8 @@ import com.intc_service.confrimationapp.Util.DataStructureUtil.ProcItem;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link ProcItem} and makes a call to the
@@ -95,6 +98,9 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
         public TextView mRemarksView;
         public ProcItem mItem;
 
+        public FrameLayout mWrapPlace;
+        public FrameLayout mWrapOperation;
+
         private ProcedureRecyclerViewAdapter mAdapter;
 
         public ProcedureViewHolder(View view, ProcedureRecyclerViewAdapter adapter) {
@@ -104,6 +110,9 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
             mPlaceView = (TextView) view.findViewById(R.id.proc_place);
             mOperationView = (TextView) view.findViewById(R.id.proc_operation);
             mRemarksView = (TextView) view.findViewById(R.id.proc_remarks);
+
+            mWrapPlace = (FrameLayout) view.findViewById(R.id.wrap_place);
+            mWrapOperation = (FrameLayout) view.findViewById(R.id.wrap_operation);
 
             mAdapter = adapter;
             mOperationView.setOnClickListener(this);  //  操作ボタンにリスナー設定
@@ -126,13 +135,73 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
                     Integer.valueOf( code.substring( 3, 6 ), 16 ) );
             return color;
         }
+        private void setItemColor(ProcItem data){
+            Resources res = this.mView.getResources();
 
-        private String getHhmm(String time){
-            //  HHMMのみ抽出
+            // 初期設定
+            int bgColor = res.getColor(R.color.colorBackgroudDefault);   // 行の背景色（緑）
+            int btnColor = res.getColor(R.color.colorInstructButton);    // 操作ボタンの背景色（水色）
+            int bgPlaceColor = res.getColor(R.color.colorBoardEquipmentText);  // 盤名の背景色（濃水色）
+            int txtColor= res.getColor(R.color.colorTextBlack);             // 操作ボタンの文字色（黒）
+            int bgWrapPlace = res.getColor(R.color.colorBgTransparent);             // 盤名のラップフレームの色（透過）
+            int bgWrapOperation = res.getColor(R.color.colorBgTransparent);         // 操作ボタンのラップフレームの色（透過）
+
+            if(data.cd_status.equals("1")){   // 実行中の時
+                bgColor = res.getColor(R.color.colorYellowButton);
+            }
+            if(data.bo_gs.equals("True")){
+                bgColor = res.getColor(R.color.colorGrayButton);   // 行の背景色（グレー）
+            }
+
+            if(data.cd_status.equals("0")) {  // 指示
+
+                if(data.bo_gs.equals("True")){
+                    // 盤情報周り（黄）
+                    bgWrapPlace= res.getColor(R.color.colorYellowButton);
+                    bgWrapOperation= res.getColor(R.color.colorYellowButton);
+                }
+            }else if(data.cd_status.equals("7")){  //完了
+                // 盤情報周り（緑）
+                bgWrapPlace= res.getColor(R.color.colorBackgroudDefault);
+                bgWrapOperation= res.getColor(R.color.colorBackgroudDefault);
+
+                if(data.bo_gs.equals("True")){
+                    bgPlaceColor = res.getColor(R.color.colorGrayButton);
+                    if(data.tx_gs.equals("スキップ")) {
+                        btnColor = res.getColor(R.color.colorGrayButton);
+                    }else{
+                        btnColor = getColorInt(data.tx_clr2);
+                        txtColor = res.getColor(R.color.colorText);
+                    }
+                }else {
+                    btnColor = getColorInt(data.tx_clr2);
+                    bgPlaceColor = res.getColor(R.color.colorBoardEquipmentDoneText);
+                    txtColor = res.getColor(R.color.colorText);
+                }
+            }
+
+            this.mView.setBackgroundColor(bgColor);
+            this.mPlaceView.setBackgroundColor(bgPlaceColor);
+            this.mOperationView.setBackgroundColor(btnColor);
+            this.mOperationView.setTextColor(txtColor);
+            this.mWrapPlace.setBackgroundColor(bgWrapPlace);
+            this.mWrapOperation.setBackgroundColor(bgWrapOperation);
+        }
+        private String getRemarks(String tx_gs, String remark){
             String rc="";
-            if(time.length() > 0 ) {
-                String[] arrTime = time.split(":");
-                rc = arrTime[0] + ":" + arrTime[1];
+
+            Pattern p = Pattern.compile("^(\\d*):(\\d*):(\\d*)$");
+            Matcher m = p.matcher(remark);
+            if(m.find()){
+                // 時刻フォーマットの時
+                rc = m.group(1) + ":" + m.group(2);
+            }else{
+                rc = remark;
+            }
+            if(tx_gs.equals("追加") && ! rc.equals("")){
+                rc = tx_gs + "\r\n" + rc;
+            }else{
+                rc = tx_gs + rc;
             }
             return rc;
         }
@@ -142,30 +211,9 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
             this.mNumberView.setText(data.tx_sno);
             this.mPlaceView.setText(data.tx_s_l);
             this.mOperationView.setText(data.tx_action);
-            this.mRemarksView.setText(getHhmm(data.ts_b));
+            this.mRemarksView.setText(getRemarks(data.tx_gs, data.ts_b));
 
-            Resources res = this.mView.getResources();
-            int bgColor = res.getColor(R.color.colorBackgroudDefault);   // 行の背景色
-            int btnColor = res.getColor(R.color.colorInstructButton);    // 操作ボタンの背景色
-            int bgPlaceColor = res.getColor(R.color.colorBoardEquipmentText);  // 盤名の背景色
-            int txtColor= res.getColor(R.color.colorTextBlack);             // 操作ボタンの文字色
-            if(data.cd_status.equals("1")){   // 実行中の時
-                bgColor = res.getColor(R.color.colorYellowButton);
-            }
-            if(data.cd_status.equals("7")){   // 実行終了の時
-                btnColor = getColorInt(data.tx_clr2);
-                bgPlaceColor= res.getColor(R.color.colorBoardEquipmentDoneText);
-                //if(data.tx_clr2.equals("FF0000") || data.tx_clr2.equals("0000FF") ){
-                    txtColor = res.getColor(R.color.colorText);
-                //}
-            }
-
-            this.mView.setBackgroundColor(bgColor);
-            this.mPlaceView.setBackgroundColor(bgPlaceColor);
-            this.mOperationView.setBackgroundColor(btnColor);
-            this.mOperationView.setTextColor(txtColor);
-
-
+            setItemColor(data);
 
             this.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -194,11 +242,13 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
         }
     }
 
-    public void setActivate(int position, String status, String ts_b){
+    public void setActivate(int position, String status, String ts_b, String bo_gs, String tx_gs){
         // 該当の手順の状態を更新する
 
         mValues.get(position).cd_status = status;
         mValues.get(position).ts_b = ts_b;
+        mValues.get(position).bo_gs = bo_gs;
+        mValues.get(position).tx_gs = tx_gs;
 
     }
     public ProcItem getItem(int position){

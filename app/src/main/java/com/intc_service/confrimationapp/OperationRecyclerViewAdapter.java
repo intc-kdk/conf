@@ -77,9 +77,10 @@ public class OperationRecyclerViewAdapter extends RecyclerView.Adapter<Operation
     }
     // 操作ボタン(右）クリック
     private void onButtonClick(View v, int position){
-
         // 対象の操作の時のみ、Activityへ通知
         if(mValues.get(position).cd_status.equals("1")) {
+            mListener.onListItemClick(mValues.get(position));
+        }else if(mValues.get(position).bo_gs.equals("True")){
             mListener.onListItemClick(mValues.get(position));
         }
     }

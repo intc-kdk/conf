@@ -3,8 +3,11 @@ package com.intc_service.confrimationapp;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.intc_service.confrimationapp.Util.DataStructureUtil;
@@ -17,7 +20,7 @@ import java.util.List;
 
 public class ProcedureActivity extends AppCompatActivity
         implements TransmissionFragment.TransmissionFragmentListener, ReceptionFragment.ReceptionFragmentListener,
-        ProcedureFragment.OnListFragmentInteractionListener{
+        ProcedureFragment.OnListFragmentInteractionListener, View.OnClickListener{
 
     private static final String TAG_TRANS = "No_UI_Fragment1";
     private static final String TAG_RECEP = "No_UI_Fragment2";
@@ -29,6 +32,9 @@ public class ProcedureActivity extends AppCompatActivity
     private TransmissionFragment sendFragment;
     private ReceptionFragment recieveFragment;
     private ProcedureFragment mProcFragment;
+
+    private String mGs = "";
+    private Button mBtnGs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +60,10 @@ public class ProcedureActivity extends AppCompatActivity
         transaction.commit();
         fragmentManager.executePendingTransactions();   // 即時実行
 
+        // 現場差異ボタン
+        mBtnGs = (Button) findViewById(R.id.btn_gs);
+        mBtnGs.setOnClickListener(this);
+
         // サーバーからの指示を待機
         recieveFragment.listen();
     }
@@ -64,6 +74,23 @@ public class ProcedureActivity extends AppCompatActivity
 
     }
 
+    @Override
+    public void onClick (View v){
+        int id = v.getId();
+
+        switch (id){
+            case R.id.btn_gs:
+                if(!mGs.equals("")){
+                    // 現在の手順を取得
+                    List<ProcItem> item = mProcFragment.getCurrentProcedure();
+                    // サーバーへ現場差異確認[23]送信
+                    DataStructureUtil dsHelper = new DataStructureUtil();
+                    String mData = dsHelper.makeSendData("23","{\"in_sno\":\""+String.valueOf(item.get(0).in_sno)+"\"}");
+                    sendFragment.send(mData);
+                }
+                break;
+        }
+    }
 
     @Override
     public void onListFragmentInteraction(Bundle rcBundle) {
@@ -92,13 +119,47 @@ public class ProcedureActivity extends AppCompatActivity
     /* 応答受信 */
     @Override
     public void onResponseRecieved(String data)  {
-        // TODO: [P] ログを取得
+        DataStructureUtil dsHelper = new DataStructureUtil();
+
+        String cmd = dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
+        Bundle bdRecievedData = dsHelper.getRecievedData();  // 渡したデータを解析し、Bundleを返す
+        if(cmd.equals("6N")) { //現場差異応答
+            if (bdRecievedData.getString("format").equals("TEXT")) {
+                int position = mProcFragment.getCurrentPos();
+                String tx_gs="";
+                String status="";
+                // cd_status スキップは"7", 追加は "0"
+                if(mGs.equals("1")){  // SKIP
+                    status="7";
+                    tx_gs="スキップ";
+                }else if(mGs.equals("2")){  //追加
+                    status="0";
+                    tx_gs="追加";
+                }else{  //  キャンセル  # ここは通らない
+
+                }
+
+                mProcFragment.setProcStatus(position, status, "", "True", tx_gs);   // 対象のエントリの更新
+                // TODO: 最終エントリの判定要
+
+                if(mGs.equals("1")) {  // SKIP
+                    mProcFragment.updateProcedure();   // SKIPは次のエントリへ進める
+                }else{
+                    mProcFragment.addProcedure();   // 追加はそのままの手順
+                }
+                // メッセージ消す
+                mGs="";
+                setGenbaSai();
+
+            }
+
+        }
 
     }
 
     @Override
     public void onFinishTransmission(String data){
-        // 送信処理終了
+        // 送信完了
 
     }
 
@@ -114,45 +175,11 @@ public class ProcedureActivity extends AppCompatActivity
         String mData = "";
         if(cmd.equals("63")) { //指示命令
             if (bdRecievedData.getString("format").equals("TEXT")) {
-                // 操作対象を取得
-                List<ProcItem> item = mProcFragment.getCurrentProcedure();
-
-                Bundle bdCur = new Bundle();
-
-                bdCur.putInt("in_sno", item.get(0).in_sno);
-                bdCur.putString("tx_sno", item.get(0).tx_sno);
-                bdCur.putString("tx_s_l", item.get(0).tx_s_l);
-                bdCur.putString("tx_action", item.get(0).tx_action);
-                bdCur.putString("tx_b_l", item.get(0).tx_b_l);
-                bdCur.putString("tx_b_r", item.get(0).tx_b_r);
-                bdCur.putString("tx_clr1", item.get(0).tx_clr1);
-                bdCur.putString("tx_clr2", item.get(0).tx_clr2);
-                bdCur.putString("tx_biko", item.get(0).tx_biko);
-                bdCur.putString("cd_status", item.get(0).cd_status);
-
-                Bundle bdPair = new Bundle();
-
-                bdPair.putInt("in_sno", item.get(1).in_sno);
-                bdPair.putString("tx_sno", item.get(1).tx_sno);
-                bdPair.putString("tx_s_l", item.get(1).tx_s_l);
-                bdPair.putString("tx_action", item.get(1).tx_action);
-                bdPair.putString("tx_b_l", item.get(1).tx_b_l);
-                bdPair.putString("tx_b_r", item.get(1).tx_b_r);
-                bdPair.putString("tx_clr1", item.get(1).tx_clr1);
-                bdPair.putString("tx_clr2", item.get(1).tx_clr2);
-                bdPair.putString("cd_status", item.get(1).cd_status);
-
-
-                //Intent生成
-                Intent intent = new Intent(this, OperationActivity.class);
-
-                intent.putExtra("current", bdCur);
-                intent.putExtra("pair", bdPair);
-
-                //盤操作画面を起動
-                startActivityForResult(intent, REQUEST_CODE_OPERATION);
-
-                mData = dsHelper.makeSendData("50","");
+                 mData = dsHelper.makeSendData("50","");
+            }
+        }else  if(cmd.equals("64")) { //現場差異指令
+            if (bdRecievedData.getString("format").equals("JSON")) {
+                 mData = dsHelper.makeSendData("50","");
             }
         }
         return mData;
@@ -170,12 +197,13 @@ public class ProcedureActivity extends AppCompatActivity
         String status = resultBundle.getString("status");
         int in_sno = resultBundle.getInt("in_sno");
         String ts_b = resultBundle.getString("ts_b");
+        String bo_gs = resultBundle.getString("bo_gs");
+        String tx_gs = resultBundle.getString("tx_gs");
 
         if(requestCode == REQUEST_CODE_OPERATION) {
             // 該当操作のステータスを更新
             int position = mProcFragment.getCurrentPos();
-
-            mProcFragment.setProcStatus(position, status, ts_b);   // 対象のエントリの更新
+            mProcFragment.setProcStatus(position, status, ts_b, bo_gs, tx_gs);   // 対象のエントリの更新
 
             if(mProcFragment.getLastInSno() > in_sno) {
                 mProcFragment.updateProcedure();                 // 次のエントリへ進める
@@ -193,8 +221,85 @@ public class ProcedureActivity extends AppCompatActivity
         }
     }
     @Override
-    public void onFinishRecieveProgress() {
-        // コマンド送受信後の 次への処理判定
-    }
+    public void onFinishRecieveProgress(String data) {
+        // サーバー発呼のコマンド送受信後の処理
+        DataStructureUtil dsHelper = new DataStructureUtil();
 
+        String cmd = dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
+        Bundle bdRecievedData = dsHelper.getRecievedData();  // 渡したデータを解析し、Bundleを返す
+        if(cmd.equals("63")) { //指示命令
+            if (bdRecievedData.getString("format").equals("TEXT")) {
+                // 操作対象を取得
+                List<ProcItem> item = mProcFragment.getCurrentProcedure();
+
+                Bundle bdCur = new Bundle();
+
+                bdCur.putInt("in_sno", item.get(0).in_sno);
+                bdCur.putString("tx_sno", item.get(0).tx_sno);
+                bdCur.putString("tx_s_l", item.get(0).tx_s_l);
+                bdCur.putString("tx_action", item.get(0).tx_action);
+                bdCur.putString("tx_b_l", item.get(0).tx_b_l);
+                bdCur.putString("tx_b_r", item.get(0).tx_b_r);
+                bdCur.putString("tx_clr1", item.get(0).tx_clr1);
+                bdCur.putString("tx_clr2", item.get(0).tx_clr2);
+                bdCur.putString("tx_biko", item.get(0).tx_biko);
+                bdCur.putString("cd_status", item.get(0).cd_status);
+                bdCur.putString("bo_gs", item.get(0).bo_gs);
+                bdCur.putString("tx_gs", item.get(0).tx_gs);
+
+                Bundle bdPair = new Bundle();
+
+                bdPair.putInt("in_sno", item.get(1).in_sno);
+                bdPair.putString("tx_sno", item.get(1).tx_sno);
+                bdPair.putString("tx_s_l", item.get(1).tx_s_l);
+                bdPair.putString("tx_action", item.get(1).tx_action);
+                bdPair.putString("tx_b_l", item.get(1).tx_b_l);
+                bdPair.putString("tx_b_r", item.get(1).tx_b_r);
+                bdPair.putString("tx_clr1", item.get(1).tx_clr1);
+                bdPair.putString("tx_clr2", item.get(1).tx_clr2);
+                bdPair.putString("cd_status", item.get(1).cd_status);
+                bdPair.putString("bo_gs", item.get(1).bo_gs);
+                bdPair.putString("tx_gs", item.get(1).tx_gs);
+
+                //Intent生成
+                Intent intent = new Intent(this, OperationActivity.class);
+
+                intent.putExtra("current", bdCur);
+                intent.putExtra("pair", bdPair);
+
+                //盤操作画面を起動
+                startActivityForResult(intent, REQUEST_CODE_OPERATION);
+            }
+        }else if(cmd.equals("64")) { //現場差異指令
+            if (bdRecievedData.getString("format").equals("JSON")) {
+                mGs = bdRecievedData.getString("Com");
+                // 現場差異表示
+                setGenbaSai();
+
+                // サーバーからの指示を待機
+                recieveFragment.listen();
+            }
+        }
+    }
+    private void setGenbaSai(){
+        // ボタン色を変更、メッセージを変更
+        mBtnGs = (Button) findViewById(R.id.btn_gs);
+        TextView messageBox = (TextView) findViewById(R.id.text_message);
+        Resources res = getResources();
+
+        if(mGs.equals("1")) {
+            messageBox.setText(R.string.genbasai_text_skip);
+            mBtnGs.setBackgroundResource(R.drawable.bg_diff_on);
+            mBtnGs.setTextColor(res.getColor(R.color.colorTextBlack));
+        }else if (mGs.equals("2")){
+            messageBox.setText(R.string.genbasai_text_add);
+            mBtnGs.setBackgroundResource(R.drawable.bg_diff_on);
+            mBtnGs.setTextColor(res.getColor(R.color.colorTextBlack));
+        }else{
+            messageBox.setText(""); // キャンセル
+            mBtnGs.setBackgroundResource(R.drawable.bg_diff_off);
+            mBtnGs.setTextColor(res.getColor(R.color.colorTextLightGray));
+        }
+
+    }
 }

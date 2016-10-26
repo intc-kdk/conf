@@ -16,4 +16,7 @@
     <color name="colorButtonBlue">#0000ff</color>
     <color name="colorTextBlack">#000000</color>
     <color name="colorBoardEquipmentDoneText">#66ffcc</color>
+    <color name="colorTextLightGray">#cccccc</color>
+    <color name="colorGrayButton">#808080</color>
+    <color name="colorBgTransparent">#00000000</color>
 </resources>

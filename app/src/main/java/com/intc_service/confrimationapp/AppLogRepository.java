@@ -2,22 +2,16 @@ package com.intc_service.confrimationapp;
 
 import android.content.Context;
 import android.os.Build;
-import android.os.Bundle;
-import android.os.Environment;
-import android.util.Log;
 
 import com.intc_service.confrimationapp.Util.SettingPrefUtil;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.sql.Date;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Enumeration;
+
 
 
 /**

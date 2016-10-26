@@ -94,7 +94,7 @@ public class WaitActivity extends AppCompatActivity
             }
         }
 
-        onFinishRecieveProgress();   // 受信状況判定
+        onFinishRecieveProgress(data);   // 受信状況判定
 
         // TODO: [P] ログを取得
 
@@ -125,7 +125,7 @@ public class WaitActivity extends AppCompatActivity
         return mData;
     }
     @Override
-    public void onFinishRecieveProgress(){
+    public void onFinishRecieveProgress(String data){
         // 受信状況判定
 
         DataStructureUtil dsHelper = new DataStructureUtil();

@@ -37,7 +37,7 @@ public class ReceptionFragment extends Fragment {
     private ServerSocket mServer = null;
     private Socket mSocket = null;
     private int mPort;
-
+    private BufferedReader reader = null;
     private ReceptionFragmentListener mListener;
 
     public ReceptionFragment() {
@@ -168,7 +168,7 @@ System.out.println("<< サーバーへ送信 >>"+response);
             @Override
             protected void onPostExecute(String result){
                 // 応答処理終了
-                ((ReceptionFragmentListener)getActivity()).onFinishRecieveProgress();
+                ((ReceptionFragmentListener)getActivity()).onFinishRecieveProgress(result);
             }
         }.execute();
     }
@@ -178,7 +178,7 @@ System.out.println("<< サーバーへ送信 >>"+response);
      */
     public interface ReceptionFragmentListener {
         String onRequestRecieved(String data);
-        void onFinishRecieveProgress();
+        void onFinishRecieveProgress(String data);
 
     }
 

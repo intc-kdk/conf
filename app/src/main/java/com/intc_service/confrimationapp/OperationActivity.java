@@ -23,16 +23,16 @@ public class OperationActivity extends AppCompatActivity
     private static final String TAG_TRANS = "No_UI_Fragment1";
 
     private Bundle mBundleCur = new Bundle();
-    private Bundle mBundlePair = new Bundle();
 
     private FragmentTransaction transaction;
     private FragmentManager fragmentManager;
 
     private TransmissionFragment sendFragment;
     private ReceptionFragment recieveFragment;
-    private ProcedureFragment mProcFragment;
 
     private int returnSno = 0;
+    private String returnGs;
+    private String returnTxGs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +41,6 @@ public class OperationActivity extends AppCompatActivity
 
         Intent intent = getIntent();
         mBundleCur = intent.getBundleExtra("current");
-        mBundlePair = intent.getBundleExtra("piar");
 
         // ヘッダ部へ設定
         setTextView();
@@ -98,6 +97,8 @@ public class OperationActivity extends AppCompatActivity
             intent.putExtra("in_sno",returnSno);
             intent.putExtra("ts_b",arrDate[1]);
             intent.putExtra("status","7");
+            intent.putExtra("bo_gs",returnGs);
+            intent.putExtra("tx_gs",returnTxGs);
             setResult(RESULT_OK, intent);
             finish();
         }
@@ -121,7 +122,8 @@ public class OperationActivity extends AppCompatActivity
         String mData = ds.makeSendData("22","{\"手順書番号\":\""+String.valueOf(item.in_sno)+"\"}");
 
         returnSno = item.in_sno;
-
+        returnGs = item.bo_gs;
+        returnTxGs = item.tx_gs;
         sendFragment.send(mData);
         //  TODO: 手順一覧へ渡すデータ作成
 
