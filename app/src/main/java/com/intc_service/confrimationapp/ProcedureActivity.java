@@ -129,7 +129,7 @@ public class ProcedureActivity extends AppCompatActivity
                     status="7";
                     tx_gs="スキップ";
                 }else if(mGs.equals("2")){  //追加
-                    status="0";
+                    status="1";
                     tx_gs="追加";
                 }else{  //  キャンセル  # ここは通らない
 

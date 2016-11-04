@@ -153,7 +153,7 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
                 bgColor = res.getColor(R.color.colorGrayButton);   // 行の背景色（グレー）
             }
 
-            if(data.cd_status.equals("0")) {  // 指示
+            if(data.cd_status.equals("1")) {  // 指示
 
                 if(data.bo_gs.equals("True")){
                     // 盤情報周り（黄）
@@ -167,11 +167,11 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
 
                 if(data.bo_gs.equals("True")){
                     bgPlaceColor = res.getColor(R.color.colorGrayButton);
+                    txtColor = res.getColor(R.color.colorText);
                     if(data.tx_gs.equals("スキップ")) {
                         btnColor = res.getColor(R.color.colorGrayButton);
                     }else{
                         btnColor = getColorInt(data.tx_clr2);
-                        txtColor = res.getColor(R.color.colorText);
                     }
                 }else {
                     btnColor = getColorInt(data.tx_clr2);
