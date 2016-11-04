@@ -30,6 +30,7 @@ public class OperationFragment extends Fragment {
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
+    private OperationRecyclerViewAdapter mRecyclerViewAdapter;
 
     private List<OpeItem> ITEMS = new ArrayList<>();
     /**
@@ -82,6 +83,9 @@ public class OperationFragment extends Fragment {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
             recyclerView.setAdapter(new OperationRecyclerViewAdapter(ITEMS, mListener));
+            // Adapterへの参照
+            mRecyclerViewAdapter = (OperationRecyclerViewAdapter)recyclerView.getAdapter();
+
         }
         return view;
     }
@@ -117,5 +121,13 @@ public class OperationFragment extends Fragment {
     public interface OnListFragmentInteractionListener {
         void onListFragmentInteraction(OpeItem item);
         void onListItemClick(OpeItem item);
+    }
+
+    public OpeItem getCurrentItem(){
+        return mRecyclerViewAdapter.getCurrentItem();
+    }
+
+    public void updateGs(String txGs){
+        mRecyclerViewAdapter.updateGs(txGs);
     }
 }

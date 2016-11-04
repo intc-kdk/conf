@@ -203,4 +203,7 @@ public class ProcedureFragment extends Fragment {
         void onListItemClick(ProcItem item);
     }
 
+    public String getCurrentSno(){
+        return mRecyclerViewAdapter.getCurrentSno();
+    }
 }

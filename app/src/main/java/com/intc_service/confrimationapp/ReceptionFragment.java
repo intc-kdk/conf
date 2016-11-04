@@ -107,9 +107,11 @@ public class ReceptionFragment extends Fragment {
                 try{
                     if(mServer == null) {
                         mServer = new ServerSocket();
-
+System.out.println("☆☆☆ ソケット新規作成 ☆☆☆");
                         mServer.setReuseAddress(true);
                         mServer.bind(new InetSocketAddress(mPort));
+                    }else{
+System.out.println("◆◆◆ ソケットリユース ◆◆◆");
                     }
                     mSocket = mServer.accept();
                     reader = new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
@@ -133,6 +135,7 @@ System.out.println("<< サーバーから受信 >>"+message);
                     if(response.equals("")) {
                         // データ未設定の時、コネクションクローズ
 System.out.println("<< 一方送信のため終了 >>");
+                        writer.close();
                         reader.close();
                        mSocket.close();
                     }else{
@@ -141,16 +144,19 @@ System.out.println("<< 一方送信のため終了 >>");
                         writer.flush();
                         AppLogRepository.create(context,"S",response);
 System.out.println("<< サーバーへ送信 >>"+response);
+                        writer.close();
                         reader.close();
                        mSocket.close(); //
                     }
 
                 }catch (SocketException e){
+                    System.out.println("＝＝＝ accept() キャンセル ＝＝＝");
                     e.printStackTrace();
                 }catch(IOException e){
                     e.printStackTrace();
                 } finally {
                     try{
+                        writer.close();
                         reader.close();
                         mSocket.close();
                     } catch (IOException e) {
@@ -190,7 +196,9 @@ System.out.println("<< サーバーへ送信 >>"+response);
     public void closeServer(){
         if(mServer != null) {
             try {
+System.out.println("＝＝＝ サーバークローズ ＝＝＝");
                 mServer.close();
+                mServer = null; // サーバーを破棄
             } catch (SocketException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -200,4 +208,5 @@ System.out.println("<< サーバーへ送信 >>"+response);
             }
         }
     }
+
 }

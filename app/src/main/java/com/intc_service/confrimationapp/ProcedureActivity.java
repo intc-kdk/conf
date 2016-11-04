@@ -33,7 +33,7 @@ public class ProcedureActivity extends AppCompatActivity
     private ReceptionFragment recieveFragment;
     private ProcedureFragment mProcFragment;
 
-    private String mGs = "";
+    private String mGs = "0";
     private Button mBtnGs;
 
     @Override
@@ -71,7 +71,6 @@ public class ProcedureActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
-
     }
 
     @Override
@@ -79,13 +78,13 @@ public class ProcedureActivity extends AppCompatActivity
         int id = v.getId();
 
         switch (id){
-            case R.id.btn_gs:
-                if(!mGs.equals("")){
+            case R.id.btn_gs: // 現場差異ボタンクリック
+                if(!mGs.equals("0")){
                     // 現在の手順を取得
-                    List<ProcItem> item = mProcFragment.getCurrentProcedure();
+                    String in_sno = mProcFragment.getCurrentSno();
                     // サーバーへ現場差異確認[23]送信
                     DataStructureUtil dsHelper = new DataStructureUtil();
-                    String mData = dsHelper.makeSendData("23","{\"in_sno\":\""+String.valueOf(item.get(0).in_sno)+"\"}");
+                    String mData = dsHelper.makeSendData("23","{\"in_sno\":\""+in_sno+"\"}");
                     sendFragment.send(mData);
                 }
                 break;
@@ -111,9 +110,6 @@ public class ProcedureActivity extends AppCompatActivity
     public void onListItemClick(ProcItem item){
         // 操作ボタンのイベント
         //System.out.println("CLICK!:"+item.tx_sno);
-    }
-
-    private void setProcActivate(){
     }
 
     /* 応答受信 */
@@ -148,7 +144,7 @@ public class ProcedureActivity extends AppCompatActivity
                     mProcFragment.addProcedure();   // 追加はそのままの手順
                 }
                 // メッセージ消す
-                mGs="";
+                mGs="0";
                 setGenbaSai();
 
             }
@@ -177,7 +173,7 @@ public class ProcedureActivity extends AppCompatActivity
             if (bdRecievedData.getString("format").equals("TEXT")) {
                  mData = dsHelper.makeSendData("50","");
             }
-        }else  if(cmd.equals("64")) { //現場差異指令
+        }else if(cmd.equals("64")) { //現場差異指令
             if (bdRecievedData.getString("format").equals("JSON")) {
                  mData = dsHelper.makeSendData("50","");
             }
@@ -261,6 +257,9 @@ public class ProcedureActivity extends AppCompatActivity
                 bdPair.putString("bo_gs", item.get(1).bo_gs);
                 bdPair.putString("tx_gs", item.get(1).tx_gs);
 
+                // 待ち受けを停止する
+                recieveFragment.closeServer();
+
                 //Intent生成
                 Intent intent = new Intent(this, OperationActivity.class);
 
@@ -302,4 +301,5 @@ public class ProcedureActivity extends AppCompatActivity
         }
 
     }
+
 }

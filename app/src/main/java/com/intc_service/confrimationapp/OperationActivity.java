@@ -3,8 +3,11 @@ package com.intc_service.confrimationapp;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.intc_service.confrimationapp.Util.DataStructureUtil;
@@ -19,20 +22,28 @@ import java.util.List;
 */
 
 public class OperationActivity extends AppCompatActivity
-        implements OperationFragment.OnListFragmentInteractionListener, TransmissionFragment.TransmissionFragmentListener{
+        implements OperationFragment.OnListFragmentInteractionListener, TransmissionFragment.TransmissionFragmentListener,
+        ReceptionFragment.ReceptionFragmentListener, View.OnClickListener{
     private static final String TAG_TRANS = "No_UI_Fragment1";
+    private static final String TAG_RECEP = "No_UI_Fragment2";
 
     private Bundle mBundleCur = new Bundle();
+    private Bundle mBundlePair = new Bundle();
 
     private FragmentTransaction transaction;
     private FragmentManager fragmentManager;
 
     private TransmissionFragment sendFragment;
     private ReceptionFragment recieveFragment;
+    private OperationFragment mOpeFragment;
 
     private int returnSno = 0;
     private String returnGs;
     private String returnTxGs;
+    private String returnTime;
+
+    private String mGs="0";
+    private Button mBtnGs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,19 +52,34 @@ public class OperationActivity extends AppCompatActivity
 
         Intent intent = getIntent();
         mBundleCur = intent.getBundleExtra("current");
+        mBundlePair = intent.getBundleExtra("pair");
+
+        //  手順書フラグメントの取得
+        mOpeFragment = (OperationFragment)getSupportFragmentManager()
+                .findFragmentById(R.id.OperetionList);
+        // ヘッダ部へ設定
 
         // ヘッダ部へ設定
         setTextView();
 
-        // TransmissionFragment を　生成
+        // TransmissionFragment/ReceptionFragment を　生成
         sendFragment = TransmissionFragment.newInstance();
+        recieveFragment = ReceptionFragment.newInstance();
 
         fragmentManager = getFragmentManager();
         transaction = fragmentManager.beginTransaction();
         transaction.add(sendFragment, TAG_TRANS);
+        transaction.add(recieveFragment, TAG_RECEP);
 
         transaction.commit();
         fragmentManager.executePendingTransactions();   // 即時実行
+
+        // 現場差異ボタン
+        mBtnGs = (Button) findViewById(R.id.btn_gs_ope);
+        mBtnGs.setOnClickListener(this);
+
+        recieveFragment.listen();
+
     }
     private void setTextView() {
 
@@ -63,10 +89,17 @@ public class OperationActivity extends AppCompatActivity
         TextView tvAction = (TextView)findViewById(R.id.title_proc_action);
         TextView tvRemarks = (TextView)findViewById(R.id.title_proc_remarks);
 
-        tvNo.setText(mBundleCur.getString("tx_sno"));
-        tvPlace.setText(mBundleCur.getString("tx_s_l"));
-        tvAction.setText(mBundleCur.getString("tx_action"));
-        tvRemarks.setText(mBundleCur.getString("tx_biko"));
+        if(mBundleCur.getString("cd_status").equals("1")) {
+            tvNo.setText(mBundleCur.getString("tx_sno"));
+            tvPlace.setText(mBundleCur.getString("tx_s_l"));
+            tvAction.setText(mBundleCur.getString("tx_action"));
+            tvRemarks.setText(mBundleCur.getString("tx_biko"));
+        }else{
+            tvNo.setText(mBundlePair.getString("tx_sno"));
+            tvPlace.setText(mBundlePair.getString("tx_s_l"));
+            tvAction.setText(mBundlePair.getString("tx_action"));
+            tvRemarks.setText(mBundlePair.getString("tx_biko"));
+        }
 
     }
 
@@ -91,18 +124,38 @@ public class OperationActivity extends AppCompatActivity
 
             String date = bdRecievedData.getString("ts_b");
             String[] arrDate = date.split(" ");
+            returnTime = arrDate[1];
+            sendFragment.halt("99@$");
 
-            Intent intent = new Intent(this,OperationActivity.class);
+        }else if (cmd.equals("6N")) {
+            // コマンド[23]応答受信
+            if (bdRecievedData.getString("format").equals("TEXT")) {
+                if(mGs.equals("1")){  // SKIP
+                    // スキップの時はそのまま戻る
+                    OpeItem item = mOpeFragment.getCurrentItem();
+                    returnSno = item.in_sno;
+                    returnTime = "";
+                    returnGs = "True";
+                    returnTxGs = "スキップ";
 
-            intent.putExtra("in_sno",returnSno);
-            intent.putExtra("ts_b",arrDate[1]);
-            intent.putExtra("status","7");
-            intent.putExtra("bo_gs",returnGs);
-            intent.putExtra("tx_gs",returnTxGs);
-            setResult(RESULT_OK, intent);
-            finish();
+                    sendFragment.halt("99@$");
+
+                }else if(mGs.equals("2")){  //追加
+                    // bo_gs tx_gs を更新して、盤操作可にして継続
+                    mOpeFragment.updateGs("追加");
+                    mGs = "0";
+                }else{  //  キャンセル  # ここは通らない
+
+                }
+
+                // メッセージ消す
+                mGs="0";
+                setGenbaSai();
+            }
+        }else if(cmd.equals("99")){
+            recieveFragment.closeServer(); //待ち受けを中止する。
+            returnProcedureActivity();
         }
-
 
         // TODO: [P] ログを取得
 
@@ -115,20 +168,114 @@ public class OperationActivity extends AppCompatActivity
     @Override
     public void onListItemClick(OpeItem item){
         // 操作（右）ボタンが押された
-        //System.out.println("CLICK!:"+item.in_sno);
+        System.out.println("CLICK!:"+item.in_sno);
 
-        // コマンド[22]送信
-        DataStructureUtil ds = new DataStructureUtil();
-        String mData = ds.makeSendData("22","{\"手順書番号\":\""+String.valueOf(item.in_sno)+"\"}");
+        if(mGs.equals("0")) { // 現場差異がなしの時
+            // コマンド[22]送信
+            DataStructureUtil ds = new DataStructureUtil();
+            String mData = ds.makeSendData("22", "{\"手順書番号\":\"" + String.valueOf(item.in_sno) + "\"}");
 
-        returnSno = item.in_sno;
-        returnGs = item.bo_gs;
-        returnTxGs = item.tx_gs;
-        sendFragment.send(mData);
-        //  TODO: 手順一覧へ渡すデータ作成
+            returnSno = item.in_sno;
+            returnGs = item.bo_gs;
+            returnTxGs = item.tx_gs;
+            sendFragment.send(mData);
 
-        //  TODO: 手順一覧へ戻る
-
+        }
 
     }
+    // 手順一覧画面へ戻る
+    private void returnProcedureActivity(){
+        Intent intent = new Intent(this,OperationActivity.class);
+
+        intent.putExtra("in_sno",returnSno);
+        intent.putExtra("ts_b",returnTime);
+        intent.putExtra("status","7");
+        intent.putExtra("bo_gs",returnGs);
+        intent.putExtra("tx_gs",returnTxGs);
+        setResult(RESULT_OK, intent);
+        finish();
+    }
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+        switch (id){
+            case R.id.btn_gs_ope: // 現場差異確認ボタンクリック
+                if(!mGs.equals("0")){ // 現場差異の指示があるとき
+
+                    // 対象の手順を取得
+                    //String in_sno = mOpeFragment.getCurrentSno();
+                    OpeItem item = mOpeFragment.getCurrentItem();
+                    // サーバーへ現場差異確認[23]送信
+                    DataStructureUtil dsHelper = new DataStructureUtil();
+                    String mData = dsHelper.makeSendData("23","{\"in_sno\":\""+item.in_sno+"\"}");
+                    sendFragment.send(mData);
+                }
+                break;
+        }
+
+    }
+
+    @Override
+    public String onRequestRecieved(String data) {
+        // サーバーからの要求（data）を受信
+        //System.out.println("ReqRecieved:"+data);
+        DataStructureUtil dsHelper = new DataStructureUtil();
+
+        String cmd = dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
+        Bundle bdRecievedData = dsHelper.getRecievedData();  // 渡したデータを解析し、Bundleを返す
+        String mData = "";
+        if(cmd.equals("64")) { //現場差異指令
+            if (bdRecievedData.getString("format").equals("JSON")) {
+                mData = dsHelper.makeSendData("50","");
+            }
+        }else if(cmd.equals("99")){
+            mData = "99@$";
+        }
+        return mData;
+    }
+
+    @Override
+    public void onFinishRecieveProgress(String data) {
+        // サーバー発呼のコマンド送受信後の処理
+        DataStructureUtil dsHelper = new DataStructureUtil();
+
+        String cmd = dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
+        Bundle bdRecievedData = dsHelper.getRecievedData();  // 渡したデータを解析し、Bundleを返す
+        if(cmd.equals("64")) { //現場差異指令
+            if (bdRecievedData.getString("format").equals("JSON")) {
+                mGs = bdRecievedData.getString("Com"); // 指示フラグを退避
+                // 現場差異表示
+                setGenbaSai();
+                // サーバーからの指示を待機
+                recieveFragment.listen();
+            }
+        }else if(cmd.equals("99")) { // accept キャンセル
+            // ここでは何もせず、応答の"99"受信で処理
+
+        }
+
+    }
+
+    private void setGenbaSai(){
+        // ボタン色を変更、メッセージを変更
+        mBtnGs = (Button) findViewById(R.id.btn_gs_ope);
+        TextView messageBox = (TextView) findViewById(R.id.text_message_ope);
+        Resources res = getResources();
+
+        if(mGs.equals("1")) {
+            messageBox.setText(R.string.genbasai_text_skip);
+            mBtnGs.setBackgroundResource(R.drawable.bg_diff_on);
+            mBtnGs.setTextColor(res.getColor(R.color.colorTextBlack));
+        }else if (mGs.equals("2")){
+            messageBox.setText(R.string.genbasai_text_add);
+            mBtnGs.setBackgroundResource(R.drawable.bg_diff_on);
+            mBtnGs.setTextColor(res.getColor(R.color.colorTextBlack));
+        }else{
+            messageBox.setText(""); // キャンセル
+            mBtnGs.setBackgroundResource(R.drawable.bg_diff_off);
+            mBtnGs.setTextColor(res.getColor(R.color.colorTextLightGray));
+        }
+
+    }
+
 }

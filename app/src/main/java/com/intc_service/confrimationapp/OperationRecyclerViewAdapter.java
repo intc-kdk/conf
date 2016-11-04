@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.intc_service.confrimationapp.OperationFragment.OnListFragmentInteractionListener;
 import com.intc_service.confrimationapp.Util.OperationDataUtil.OpeItem;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -52,7 +53,7 @@ public class OperationRecyclerViewAdapter extends RecyclerView.Adapter<Operation
 
         Resources res = holder.mView.getResources();
         int bgColor;
-        if(mValues.get(position).cd_status.equals("1")){
+        if(mValues.get(position).cd_status.equals("1")){// || mValues.get(position).bo_gs.equals("True")){
             bgColor = res.getColor(R.color.colorYellowButton);
         }else {
             bgColor = res.getColor(R.color.colorBackgroudDefault);
@@ -116,6 +117,29 @@ public class OperationRecyclerViewAdapter extends RecyclerView.Adapter<Operation
         @Override
         public String toString() {
             return super.toString() + " '" + mBeforeView.getText() + "'";
+        }
+    }
+
+    public OpeItem getCurrentItem(){
+        Iterator<OpeItem> i = mValues.iterator();
+        while(i.hasNext()){
+            OpeItem item = i.next();
+            if(item.cd_status.equals("1")){
+                return item;
+            }
+        }
+
+        return null;
+    }
+
+    public void updateGs(String txGs){
+        Iterator<OpeItem> i = mValues.iterator();
+        while(i.hasNext()){
+            OpeItem item = i.next();
+            if(item.cd_status.equals("1")){
+                item.bo_gs = "True";
+                item.tx_gs = txGs;
+            }
         }
     }
 }

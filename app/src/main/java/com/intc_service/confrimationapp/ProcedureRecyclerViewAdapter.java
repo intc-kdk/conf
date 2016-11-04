@@ -264,4 +264,17 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
         }
         return mValues.get(0);
     }
+
+    public String getCurrentSno(){
+        Iterator<ProcItem> i = mValues.iterator();
+        while(i.hasNext()){
+            ProcItem item = i.next();
+            //ステータスが"1"（確認中）in_snoを返す
+            if(item.cd_status.equals("1")){
+                return String.valueOf(item.in_sno);
+            }
+        }
+
+        return null;
+    }
 }
