@@ -11,10 +11,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.intc_service.confrimationapp.Util.OperationComparator;
 import com.intc_service.confrimationapp.Util.OperationDataUtil;
 import com.intc_service.confrimationapp.Util.OperationDataUtil.OpeItem;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -61,11 +64,24 @@ public class OperationFragment extends Fragment {
     private void makeOperatonList() {
         // 手順データを取得
         Intent intent = getActivity().getIntent();
-        Bundle bdCur = intent.getBundleExtra("current");
-        Bundle bdPair = intent.getBundleExtra("pair");
 
-        ITEMS.add(OperationDataUtil.toList(bdCur));
-        ITEMS.add(OperationDataUtil.toList(bdPair));
+        Bundle extras = intent.getExtras();
+        if (extras != null) {
+            Iterator<?> it = extras.keySet().iterator();
+            while (it.hasNext()) {
+                String key = (String) it.next();
+                if(key.equals("current")){
+                    Bundle bdCur = intent.getBundleExtra(key);
+                    ITEMS.add(OperationDataUtil.toList(bdCur));
+                }
+                if(key.equals("pair")){
+                    Bundle bdPair = intent.getBundleExtra(key);
+                    ITEMS.add(OperationDataUtil.toList(bdPair));
+                }
+            }
+            //  in_sno でソート
+            Collections.sort(ITEMS, new OperationComparator());
+        }
 
     }
     @Override

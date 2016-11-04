@@ -262,7 +262,7 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
                 return item;
             }
         }
-        return mValues.get(0);
+        return null;
     }
 
     public String getCurrentSno(){

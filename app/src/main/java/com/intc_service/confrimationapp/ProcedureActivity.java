@@ -243,20 +243,6 @@ public class ProcedureActivity extends AppCompatActivity
                 bdCur.putString("bo_gs", item.get(0).bo_gs);
                 bdCur.putString("tx_gs", item.get(0).tx_gs);
 
-                Bundle bdPair = new Bundle();
-
-                bdPair.putInt("in_sno", item.get(1).in_sno);
-                bdPair.putString("tx_sno", item.get(1).tx_sno);
-                bdPair.putString("tx_s_l", item.get(1).tx_s_l);
-                bdPair.putString("tx_action", item.get(1).tx_action);
-                bdPair.putString("tx_b_l", item.get(1).tx_b_l);
-                bdPair.putString("tx_b_r", item.get(1).tx_b_r);
-                bdPair.putString("tx_clr1", item.get(1).tx_clr1);
-                bdPair.putString("tx_clr2", item.get(1).tx_clr2);
-                bdPair.putString("cd_status", item.get(1).cd_status);
-                bdPair.putString("bo_gs", item.get(1).bo_gs);
-                bdPair.putString("tx_gs", item.get(1).tx_gs);
-
                 // 待ち受けを停止する
                 recieveFragment.closeServer();
 
@@ -264,7 +250,22 @@ public class ProcedureActivity extends AppCompatActivity
                 Intent intent = new Intent(this, OperationActivity.class);
 
                 intent.putExtra("current", bdCur);
-                intent.putExtra("pair", bdPair);
+                if(item.size()>1) {
+                    Bundle bdPair = new Bundle();
+
+                    bdPair.putInt("in_sno", item.get(1).in_sno);
+                    bdPair.putString("tx_sno", item.get(1).tx_sno);
+                    bdPair.putString("tx_s_l", item.get(1).tx_s_l);
+                    bdPair.putString("tx_action", item.get(1).tx_action);
+                    bdPair.putString("tx_b_l", item.get(1).tx_b_l);
+                    bdPair.putString("tx_b_r", item.get(1).tx_b_r);
+                    bdPair.putString("tx_clr1", item.get(1).tx_clr1);
+                    bdPair.putString("tx_clr2", item.get(1).tx_clr2);
+                    bdPair.putString("cd_status", item.get(1).cd_status);
+                    bdPair.putString("bo_gs", item.get(1).bo_gs);
+                    bdPair.putString("tx_gs", item.get(1).tx_gs);
+                    intent.putExtra("pair", bdPair);
+                }
 
                 //盤操作画面を起動
                 startActivityForResult(intent, REQUEST_CODE_OPERATION);

@@ -162,7 +162,8 @@ public class ProcedureFragment extends Fragment {
         // 次の手順へ進める
         int nextPos = mCurrentPos + 1;
 
-        if(mItems.get(nextPos).tx_sno.equals("C")){
+        // コメント行を無視して、次の手順を取得する
+        while(mItems.get(nextPos).tx_sno.equals("C")){
             nextPos++;  // 次がコメントの時は一つ進める
         }
         // 対象の指示を更新
@@ -185,12 +186,16 @@ public class ProcedureFragment extends Fragment {
         List<ProcItem> arrProc = new ArrayList<>();;
 
         ProcItem data = mRecyclerViewAdapter.getItem(mCurrentPos);
-
         arrProc.add(data);
-        arrProc.add(mRecyclerViewAdapter.getPairItem(data.in_sno, data.in_swno));
 
-        //  in_sno でソート
-        Collections.sort(arrProc, new ProcedureComparator());
+        ProcItem pairItem = mRecyclerViewAdapter.getPairItem(data.in_sno, data.in_swno);
+
+        if( pairItem != null){
+            arrProc.add(pairItem);
+            //  in_sno でソート
+            Collections.sort(arrProc, new ProcedureComparator());
+        }
+
         return arrProc;
     }
 
