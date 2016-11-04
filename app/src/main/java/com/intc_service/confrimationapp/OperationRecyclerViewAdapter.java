@@ -50,6 +50,7 @@ public class OperationRecyclerViewAdapter extends RecyclerView.Adapter<Operation
         holder.mNumberView.setText(mValues.get(position).tx_sno);
         holder.mBeforeView.setText(mValues.get(position).tx_b_l);
         holder.mAfterView.setText(mValues.get(position).tx_b_r);
+        holder.noTap = true;
 
         Resources res = holder.mView.getResources();
         int bgColor;
@@ -98,6 +99,7 @@ public class OperationRecyclerViewAdapter extends RecyclerView.Adapter<Operation
         public OpeItem mItem;
 
         private OperationRecyclerViewAdapter mAdapter;
+        public boolean noTap = true;
 
         public ViewHolder(View view, OperationRecyclerViewAdapter adapter) {
             super(view);
@@ -110,8 +112,10 @@ public class OperationRecyclerViewAdapter extends RecyclerView.Adapter<Operation
             mAfterView.setOnClickListener(this);  // 操作ボタン（右）へのリスナー設定
         }
         public void onClick(View view){
-
-            mAdapter.onButtonClick(mView, getAdapterPosition());
+            if(noTap) {
+                mAdapter.onButtonClick(mView, getAdapterPosition());
+                noTap = false;
+            }
         }
 
         @Override
