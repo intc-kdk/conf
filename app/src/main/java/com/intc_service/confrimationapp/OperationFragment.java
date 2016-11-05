@@ -64,24 +64,13 @@ public class OperationFragment extends Fragment {
     private void makeOperatonList() {
         // 手順データを取得
         Intent intent = getActivity().getIntent();
-
-        Bundle extras = intent.getExtras();
-        if (extras != null) {
-            Iterator<?> it = extras.keySet().iterator();
-            while (it.hasNext()) {
-                String key = (String) it.next();
-                if(key.equals("current")){
-                    Bundle bdCur = intent.getBundleExtra(key);
-                    ITEMS.add(OperationDataUtil.toList(bdCur));
-                }
-                if(key.equals("pair")){
-                    Bundle bdPair = intent.getBundleExtra(key);
-                    ITEMS.add(OperationDataUtil.toList(bdPair));
-                }
-            }
-            //  in_sno でソート
-            Collections.sort(ITEMS, new OperationComparator());
+        Bundle bdCur = intent.getBundleExtra("current");
+        ArrayList<Bundle> items = bdCur.getParcelableArrayList("operation");
+        for( Bundle i : items){
+            ITEMS.add(OperationDataUtil.toList(i));
         }
+        //  in_sno でソート
+        Collections.sort(ITEMS, new OperationComparator());
 
     }
     @Override

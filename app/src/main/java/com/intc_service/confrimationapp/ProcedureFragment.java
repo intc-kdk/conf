@@ -180,7 +180,35 @@ public class ProcedureFragment extends Fragment {
         // 現場差異で追加の時、表示の更新のみ行う
         mRecyclerViewAdapter.notifyDataSetChanged();
     }
-    public List<ProcItem> getCurrentProcedure() {
+    public void getCurrentProcedure() {
+        // 現在実行中の手順とその対の手順を取得
+
+        List<ProcItem> arrProc = new ArrayList<>();;
+
+        ProcItem data = mRecyclerViewAdapter.getItem(mCurrentPos);
+        arrProc.add(data);
+
+        mRecyclerViewAdapter.getBoardItems( data.in_bno);
+        ProcItem pairItem = mRecyclerViewAdapter.getPairItem(data.in_sno, data.in_swno);
+
+        if( pairItem != null){
+            arrProc.add(pairItem);
+            //  in_sno でソート
+            Collections.sort(arrProc, new ProcedureComparator());
+        }
+
+    }
+    public Bundle getCurrentBoard() {
+        // 現在実行中の手順とその対の手順を取得
+        Bundle bd = new Bundle();
+        // 現在の手順
+        ProcItem data = mRecyclerViewAdapter.getItem(mCurrentPos);
+        // 現在の手順の 盤noから、関連する手順を取得
+        bd.putParcelableArrayList("operation",mRecyclerViewAdapter.getBoardItems( data.in_bno));
+        return bd;
+
+    }
+    /*    public List<ProcItem> getCurrentProcedure() {
         // 現在実行中の手順とその対の手順を取得
 
         List<ProcItem> arrProc = new ArrayList<>();;
@@ -198,7 +226,7 @@ public class ProcedureFragment extends Fragment {
 
         return arrProc;
     }
-
+*/
     /**
      リスナー
      */

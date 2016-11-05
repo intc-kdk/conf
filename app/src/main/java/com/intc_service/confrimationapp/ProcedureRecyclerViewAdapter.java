@@ -11,6 +11,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.intc_service.confrimationapp.ProcedureFragment.OnListFragmentInteractionListener;
+import com.intc_service.confrimationapp.Util.DataStructureUtil;
 import com.intc_service.confrimationapp.Util.DataStructureUtil.ProcItem;
 
 import java.util.ArrayList;
@@ -263,6 +264,18 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
             }
         }
         return null;
+    }
+    public ArrayList<Bundle> getBoardItems(String bno) {
+        Iterator<ProcItem> i = mValues.iterator();
+        ArrayList<Bundle> sw = new ArrayList<>();
+        while(i.hasNext()){
+            ProcItem item = i.next();
+            // 同一 in_bno の手順を返す
+            if(item.in_bno.equals(bno)){
+                sw.add(DataStructureUtil.toOperationBundle(item));
+            }
+        }
+        return sw;
     }
 
     public String getCurrentSno(){

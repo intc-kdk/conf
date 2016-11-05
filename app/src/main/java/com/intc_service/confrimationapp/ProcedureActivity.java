@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.intc_service.confrimationapp.Util.DataStructureUtil;
 import com.intc_service.confrimationapp.Util.DataStructureUtil.ProcItem;
 
+import java.util.ArrayList;
 import java.util.List;
 /*
  *  K-02 手順書画面
@@ -225,48 +226,14 @@ public class ProcedureActivity extends AppCompatActivity
         Bundle bdRecievedData = dsHelper.getRecievedData();  // 渡したデータを解析し、Bundleを返す
         if(cmd.equals("63")) { //指示命令
             if (bdRecievedData.getString("format").equals("TEXT")) {
-                // 操作対象を取得
-                List<ProcItem> item = mProcFragment.getCurrentProcedure();
-
-                Bundle bdCur = new Bundle();
-
-                bdCur.putInt("in_sno", item.get(0).in_sno);
-                bdCur.putString("tx_sno", item.get(0).tx_sno);
-                bdCur.putString("tx_s_l", item.get(0).tx_s_l);
-                bdCur.putString("tx_action", item.get(0).tx_action);
-                bdCur.putString("tx_b_l", item.get(0).tx_b_l);
-                bdCur.putString("tx_b_r", item.get(0).tx_b_r);
-                bdCur.putString("tx_clr1", item.get(0).tx_clr1);
-                bdCur.putString("tx_clr2", item.get(0).tx_clr2);
-                bdCur.putString("tx_biko", item.get(0).tx_biko);
-                bdCur.putString("cd_status", item.get(0).cd_status);
-                bdCur.putString("bo_gs", item.get(0).bo_gs);
-                bdCur.putString("tx_gs", item.get(0).tx_gs);
-
                 // 待ち受けを停止する
                 recieveFragment.closeServer();
 
                 //Intent生成
                 Intent intent = new Intent(this, OperationActivity.class);
 
-                intent.putExtra("current", bdCur);
-                if(item.size()>1) {
-                    Bundle bdPair = new Bundle();
-
-                    bdPair.putInt("in_sno", item.get(1).in_sno);
-                    bdPair.putString("tx_sno", item.get(1).tx_sno);
-                    bdPair.putString("tx_s_l", item.get(1).tx_s_l);
-                    bdPair.putString("tx_action", item.get(1).tx_action);
-                    bdPair.putString("tx_b_l", item.get(1).tx_b_l);
-                    bdPair.putString("tx_b_r", item.get(1).tx_b_r);
-                    bdPair.putString("tx_clr1", item.get(1).tx_clr1);
-                    bdPair.putString("tx_clr2", item.get(1).tx_clr2);
-                    bdPair.putString("cd_status", item.get(1).cd_status);
-                    bdPair.putString("bo_gs", item.get(1).bo_gs);
-                    bdPair.putString("tx_gs", item.get(1).tx_gs);
-                    intent.putExtra("pair", bdPair);
-                }
-
+                // 対象の盤情報を取得し、intentへ設定
+                intent.putExtra("current",mProcFragment.getCurrentBoard());
                 //盤操作画面を起動
                 startActivityForResult(intent, REQUEST_CODE_OPERATION);
             }

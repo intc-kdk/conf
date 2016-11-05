@@ -51,8 +51,7 @@ public class OperationActivity extends AppCompatActivity
         setContentView(R.layout.activity_operation);
 
         Intent intent = getIntent();
-        mBundleCur = intent.getBundleExtra("current");
-        mBundlePair = intent.getBundleExtra("pair");
+        //mBundleCur = intent.getBundleExtra("current");
 
         //  手順書フラグメントの取得
         mOpeFragment = (OperationFragment)getSupportFragmentManager()
@@ -89,17 +88,13 @@ public class OperationActivity extends AppCompatActivity
         TextView tvAction = (TextView)findViewById(R.id.title_proc_action);
         TextView tvRemarks = (TextView)findViewById(R.id.title_proc_remarks);
 
-        if(mBundleCur.getString("cd_status").equals("1")) {
-            tvNo.setText(mBundleCur.getString("tx_sno"));
-            tvPlace.setText(mBundleCur.getString("tx_s_l"));
-            tvAction.setText(mBundleCur.getString("tx_action"));
-            tvRemarks.setText(mBundleCur.getString("tx_biko"));
-        }else{
-            tvNo.setText(mBundlePair.getString("tx_sno"));
-            tvPlace.setText(mBundlePair.getString("tx_s_l"));
-            tvAction.setText(mBundlePair.getString("tx_action"));
-            tvRemarks.setText(mBundlePair.getString("tx_biko"));
-        }
+        OpeItem item = mOpeFragment.getCurrentItem();
+
+        tvNo.setText(item.tx_sno);
+        tvPlace.setText(item.tx_s_l);
+        tvAction.setText(item.tx_action);
+        tvRemarks.setText(item.tx_biko);
+
 
     }
 
