@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.intc_service.confrimationapp.OperationFragment.OnListFragmentInteractionListener;
@@ -49,7 +50,7 @@ public class OperationRecyclerViewAdapter extends RecyclerView.Adapter<Operation
         holder.mItem = mValues.get(position);
         holder.mNumberView.setText(mValues.get(position).tx_sno);
         holder.mBeforeView.setText(mValues.get(position).tx_b_l);
-        holder.mAfterView.setText(mValues.get(position).tx_b_r);
+
         holder.noTap = true;
 
         Resources res = holder.mView.getResources();
@@ -66,6 +67,16 @@ public class OperationRecyclerViewAdapter extends RecyclerView.Adapter<Operation
         holder.mBeforeView.setBackgroundColor(beforeColor);
         holder.mAfterView.setBackgroundColor(afterColor);
 
+        // ペアなし
+        if(mValues.get(position).cd_pair.equals("0")){
+            holder.mBeforeView.setVisibility(View.INVISIBLE);
+            holder.mArrow.setVisibility(View.INVISIBLE);
+            holder.mAfterView.setText(mValues.get(position).tx_action);
+        }else{
+            holder.mBeforeView.setVisibility(View.VISIBLE);
+            holder.mArrow.setVisibility(View.VISIBLE);
+            holder.mAfterView.setText(mValues.get(position).tx_b_r);
+        }
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,6 +107,7 @@ public class OperationRecyclerViewAdapter extends RecyclerView.Adapter<Operation
         public final TextView mNumberView;
         public final TextView mBeforeView;
         public final TextView mAfterView;
+        public final ImageView mArrow;
         public OpeItem mItem;
 
         private OperationRecyclerViewAdapter mAdapter;
@@ -107,6 +119,7 @@ public class OperationRecyclerViewAdapter extends RecyclerView.Adapter<Operation
             mNumberView = (TextView) view.findViewById(R.id.proc_number);
             mBeforeView = (TextView) view.findViewById(R.id.action_before);
             mAfterView = (TextView) view.findViewById(R.id.action_after);
+            mArrow = (ImageView) view.findViewById(R.id.imgArrow);
 
             mAdapter = adapter;
             mAfterView.setOnClickListener(this);  // 操作ボタン（右）へのリスナー設定

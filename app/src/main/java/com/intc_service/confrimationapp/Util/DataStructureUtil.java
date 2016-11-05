@@ -167,7 +167,7 @@ public class DataStructureUtil {
         return new ProcItem(entry.getString("in_sno"), entry.getString("in_swno"), entry.getString("in_bno"), entry.getString("tx_sno"), entry.getString("tx_basho"),  entry.getString("tx_bname"), entry.getString("tx_swname"),
                 entry.getString("tx_action"), entry.getString("tx_biko"), entry.getString("dotime"), entry.getString("tx_gs"), entry.getString("tx_com"), entry.getString("tx_s_l"),
                 entry.getString("tx_s_r"),entry.getString("tx_b_l"), entry.getString("tx_b_r"), entry.getString("tx_clr1"), entry.getString("tx_clr2"), entry.getString("ts_b"),
-                entry.getString("cd_status"), entry.getString("bo_gs"));
+                entry.getString("cd_status"), entry.getString("cd_pair"), entry.getString("bo_gs"));
     }
     private static void  makeEntry(final JSONArray array) {
         for (int i = 0, size = array.length(); i < size; i++) {
@@ -199,6 +199,7 @@ public class DataStructureUtil {
         bd.putString("tx_clr2", item.tx_clr2);
         bd.putString("tx_biko", item.tx_biko);
         bd.putString("cd_status", item.cd_status);
+        bd.putString("cd_pair", item.cd_pair);
         bd.putString("bo_gs", item.bo_gs);
         bd.putString("tx_gs", item.tx_gs);
         return bd;
@@ -228,9 +229,10 @@ public class DataStructureUtil {
         public final String tx_clr2;
         public String ts_b;
         public String cd_status;
+        public String cd_pair;
         public String bo_gs;
 
-        public ProcItem(String in_sno ,String in_swno ,String in_bno ,String tx_sno ,String tx_basho , String tx_bname ,String tx_swname ,String tx_action ,String tx_biko ,String dotime ,String tx_gs ,String tx_com ,String tx_s_l ,String tx_s_r ,String tx_b_l ,String tx_b_r ,String tx_clr1 ,String tx_clr2 ,String ts_b ,String cd_status ,String bo_gs){
+        public ProcItem(String in_sno ,String in_swno ,String in_bno ,String tx_sno ,String tx_basho , String tx_bname ,String tx_swname ,String tx_action ,String tx_biko ,String dotime ,String tx_gs ,String tx_com ,String tx_s_l ,String tx_s_r ,String tx_b_l ,String tx_b_r ,String tx_clr1 ,String tx_clr2 ,String ts_b ,String cd_status ,String cd_pair ,String bo_gs){
             this.in_sno = Integer.parseInt(in_sno);
             this.in_swno = in_swno;
             this.in_bno = in_bno;
@@ -251,6 +253,7 @@ public class DataStructureUtil {
             this.tx_clr2 = tx_clr2;
             this.ts_b = ts_b;
             this.cd_status = cd_status;
+            this.cd_pair = cd_pair;
             this.bo_gs = bo_gs;
         }
     }
