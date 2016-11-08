@@ -46,7 +46,7 @@ public class ProcedureActivity extends AppCompatActivity
         mProcFragment = (ProcedureFragment)getSupportFragmentManager()
                 .findFragmentById(R.id.ProcedureList);
 
-        // 初回起動時のみ、手順のカレント表示はマニュアル設定
+        // 最初の手順をセット
         mProcFragment.setFirstProcedure();
 
         // TransmissionFragment/ReceptionFragment を　生成
@@ -65,10 +65,38 @@ public class ProcedureActivity extends AppCompatActivity
         mBtnGs = (Button) findViewById(R.id.btn_gs);
         mBtnGs.setOnClickListener(this);
 
-        // サーバーからの指示を待機
-        recieveFragment.listen();
+
+
+        if(checkPctl()){
+            // 盤操作画面からの開始のとき
+            startUpOperation();
+
+        }else{
+            // サーバーからの指示を待機
+            recieveFragment.listen();
+        }
+
+
     }
 
+    private boolean checkPctl(){
+        // 手順データをIntentから取得
+        Intent intent = getIntent();
+        String resultSt = intent.getStringExtra("proc");
+
+        // 手順データを解析し、tejunを取り出す
+        DataStructureUtil dsHelper = new DataStructureUtil();
+        String cmd = dsHelper.setRecievedData(resultSt);
+        Bundle tmpBundle = dsHelper.getRecievedData().getBundle("t_sno");
+        System.out.println(tmpBundle.getString("cd_pctl"));
+
+        if(tmpBundle.getString("cd_pctl").equals("1")){
+            return true;
+        }else{
+            return false;
+        }
+
+    }
     @Override
     protected void onStart() {
         super.onStart();
@@ -217,6 +245,19 @@ public class ProcedureActivity extends AppCompatActivity
 
         }
     }
+    private void startUpOperation(){
+        // 待ち受けを停止する
+        recieveFragment.closeServer();
+
+        //Intent生成
+        Intent intent = new Intent(this, OperationActivity.class);
+
+        // 対象の盤情報を取得し、intentへ設定
+        intent.putExtra("current",mProcFragment.getCurrentBoard());
+        //盤操作画面を起動
+        startActivityForResult(intent, REQUEST_CODE_OPERATION);
+    }
+
     @Override
     public void onFinishRecieveProgress(String data) {
         // サーバー発呼のコマンド送受信後の処理
@@ -226,7 +267,9 @@ public class ProcedureActivity extends AppCompatActivity
         Bundle bdRecievedData = dsHelper.getRecievedData();  // 渡したデータを解析し、Bundleを返す
         if(cmd.equals("63")) { //指示命令
             if (bdRecievedData.getString("format").equals("TEXT")) {
-                // 待ち受けを停止する
+                //盤操作画面を起動
+                startUpOperation();
+/*                // 待ち受けを停止する
                 recieveFragment.closeServer();
 
                 //Intent生成
@@ -235,7 +278,7 @@ public class ProcedureActivity extends AppCompatActivity
                 // 対象の盤情報を取得し、intentへ設定
                 intent.putExtra("current",mProcFragment.getCurrentBoard());
                 //盤操作画面を起動
-                startActivityForResult(intent, REQUEST_CODE_OPERATION);
+                startActivityForResult(intent, REQUEST_CODE_OPERATION);*/
             }
         }else if(cmd.equals("64")) { //現場差異指令
             if (bdRecievedData.getString("format").equals("JSON")) {

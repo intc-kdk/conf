@@ -191,11 +191,11 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
         private String getRemarks(String tx_gs, String remark){
             String rc="";
 
-            Pattern p = Pattern.compile("^(\\d*):(\\d*):(\\d*)$");
+            Pattern p = Pattern.compile("^(.*) (\\d*):(\\d*):(\\d*)$");
             Matcher m = p.matcher(remark);
             if(m.find()){
                 // 時刻フォーマットの時
-                rc = m.group(1) + ":" + m.group(2);
+                rc = m.group(2) + ":" + m.group(3);
             }else{
                 rc = remark;
             }

@@ -117,9 +117,10 @@ public class OperationActivity extends AppCompatActivity
         // コマンド[22]応答受信
         if(cmd.equals("60")) {
 
-            String date = bdRecievedData.getString("ts_b");
-            String[] arrDate = date.split(" ");
-            returnTime = arrDate[1];
+//            String date = bdRecievedData.getString("ts_b");
+//            String[] arrDate = date.split(" ");
+//            returnTime = arrDate[1];
+            returnTime = bdRecievedData.getString("ts_b");
             sendFragment.halt("99@$");
 
         }else if (cmd.equals("6N")) {

@@ -125,9 +125,35 @@ public class ProcedureFragment extends Fragment {
         while(mItems.get(pos).tx_sno.equals("C")){
             pos++;
         }
-        mCurrentPos = pos;
+        // コメントスキップ後、最初に"0"の手順を 開始位置とする
+        boolean done = false; // 実行済み手順判定
+        int execProcPosition = 0; // 実行中の手順ポジション
+        while(!mItems.get(pos).cd_status.equals("0")){
+            if(mItems.get(pos).cd_status.equals("7")){
+                done = true;
+            }
+            if(mItems.get(pos).cd_status.equals("1")){
+                execProcPosition=pos; //　最新の実行中を退避（スキップを考慮）
+                done = true;
+            }
+            pos++;
+        }
 
-        setProcStatus(mCurrentPos, "1","","False","");
+        if(execProcPosition>0){
+            // 実行中手順があった場合、現在位置を事項中の手順に設定
+            mCurrentPos = execProcPosition;
+            setProcStatus(mCurrentPos, mItems.get(mCurrentPos).cd_status, mItems.get(mCurrentPos).ts_b, mItems.get(mCurrentPos).bo_gs,mItems.get(mCurrentPos).tx_gs);
+        }else {
+            // 現在位置を設定
+            mCurrentPos = pos;
+            setProcStatus(mCurrentPos, "1","","False","");
+        }
+
+        if(done){ // 実行済み手順あり（手順再開）の場合、一つ前の手順までスクロール
+            RecyclerView recyclerView = (RecyclerView) getActivity().findViewById(R.id.ProcedureList);
+            recyclerView.scrollToPosition(mCurrentPos-1);
+        }
+
     }
 
     private int getLastPorcedure(){
@@ -146,6 +172,7 @@ public class ProcedureFragment extends Fragment {
     public void setProcStatus(int pos, String status, String ts_b, String bo_gs, String tx_gs){
         // ヘッダーに表示するため、対象の指示をActivityへ通知
         mRecyclerViewAdapter.setActivate(pos,status, ts_b, bo_gs, tx_gs);
+
         Bundle rcBundle = new Bundle();
         rcBundle.putString("tx_sno",mItems.get(pos).tx_sno);
         rcBundle.putString("tx_s_l",mItems.get(pos).tx_s_l);
@@ -175,29 +202,18 @@ public class ProcedureFragment extends Fragment {
         // RecyclerViewを更新
         mCurrentPos=nextPos;
         mRecyclerViewAdapter.notifyDataSetChanged();
+
+        // スクロール
+        /*System.out.println("SCROLL!!!"+(mCurrentPos-1));
+        RecyclerView recyclerView = (RecyclerView) getActivity().findViewById(R.id.ProcedureList);
+        recyclerView.scrollToPosition(mCurrentPos-1);*/
+
     }
     public void addProcedure(){
         // 現場差異で追加の時、表示の更新のみ行う
         mRecyclerViewAdapter.notifyDataSetChanged();
     }
-    public void getCurrentProcedure() {
-        // 現在実行中の手順とその対の手順を取得
 
-        List<ProcItem> arrProc = new ArrayList<>();;
-
-        ProcItem data = mRecyclerViewAdapter.getItem(mCurrentPos);
-        arrProc.add(data);
-
-        mRecyclerViewAdapter.getBoardItems( data.in_bno);
-        ProcItem pairItem = mRecyclerViewAdapter.getPairItem(data.in_sno, data.in_swno);
-
-        if( pairItem != null){
-            arrProc.add(pairItem);
-            //  in_sno でソート
-            Collections.sort(arrProc, new ProcedureComparator());
-        }
-
-    }
     public Bundle getCurrentBoard() {
         // 現在実行中の手順とその対の手順を取得
         Bundle bd = new Bundle();
@@ -208,25 +224,7 @@ public class ProcedureFragment extends Fragment {
         return bd;
 
     }
-    /*    public List<ProcItem> getCurrentProcedure() {
-        // 現在実行中の手順とその対の手順を取得
 
-        List<ProcItem> arrProc = new ArrayList<>();;
-
-        ProcItem data = mRecyclerViewAdapter.getItem(mCurrentPos);
-        arrProc.add(data);
-
-        ProcItem pairItem = mRecyclerViewAdapter.getPairItem(data.in_sno, data.in_swno);
-
-        if( pairItem != null){
-            arrProc.add(pairItem);
-            //  in_sno でソート
-            Collections.sort(arrProc, new ProcedureComparator());
-        }
-
-        return arrProc;
-    }
-*/
     /**
      リスナー
      */
