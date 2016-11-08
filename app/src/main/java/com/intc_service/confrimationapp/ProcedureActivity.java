@@ -88,7 +88,6 @@ public class ProcedureActivity extends AppCompatActivity
         DataStructureUtil dsHelper = new DataStructureUtil();
         String cmd = dsHelper.setRecievedData(resultSt);
         Bundle tmpBundle = dsHelper.getRecievedData().getBundle("t_sno");
-        System.out.println(tmpBundle.getString("cd_pctl"));
 
         if(tmpBundle.getString("cd_pctl").equals("1")){
             return true;
@@ -269,16 +268,7 @@ public class ProcedureActivity extends AppCompatActivity
             if (bdRecievedData.getString("format").equals("TEXT")) {
                 //盤操作画面を起動
                 startUpOperation();
-/*                // 待ち受けを停止する
-                recieveFragment.closeServer();
 
-                //Intent生成
-                Intent intent = new Intent(this, OperationActivity.class);
-
-                // 対象の盤情報を取得し、intentへ設定
-                intent.putExtra("current",mProcFragment.getCurrentBoard());
-                //盤操作画面を起動
-                startActivityForResult(intent, REQUEST_CODE_OPERATION);*/
             }
         }else if(cmd.equals("64")) { //現場差異指令
             if (bdRecievedData.getString("format").equals("JSON")) {

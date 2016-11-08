@@ -13,7 +13,7 @@ public class SettingPrefUtil {
     public static final String PREF_FILE_NAME = "settings";
 
     private static final String KEY_SERVER_IP_ADDR = "ip.server";             // key
-    private static final String KEY_SERVER_IP_ADDR_DEFAULT = "192.168.10.20"; // default value
+    private static final String KEY_SERVER_IP_ADDR_DEFAULT = "192.168.0.7"; // default value
 
     private static final String KEY_SERVER_PORT = "port.server";    // key
     private static final int KEY_SERVER_PORT_DEFAULT = 1234;   // default value

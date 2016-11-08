@@ -203,10 +203,9 @@ public class ProcedureFragment extends Fragment {
         mCurrentPos=nextPos;
         mRecyclerViewAdapter.notifyDataSetChanged();
 
-        // スクロール
-        /*System.out.println("SCROLL!!!"+(mCurrentPos-1));
+        // スクロール (前2手順を表示）
         RecyclerView recyclerView = (RecyclerView) getActivity().findViewById(R.id.ProcedureList);
-        recyclerView.scrollToPosition(mCurrentPos-1);*/
+        ((LinearLayoutManager)recyclerView.getLayoutManager()).scrollToPositionWithOffset((mCurrentPos - 2),0);
 
     }
     public void addProcedure(){
