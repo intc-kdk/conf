@@ -91,7 +91,7 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
     }
 
     /* 通常操作の ViewHolder*/
-    public class ProcedureViewHolder extends ViewHolder implements View.OnClickListener {
+    public class ProcedureViewHolder extends ViewHolder{// implements View.OnClickListener {
         public final View mView;
         public final TextView mNumberView;
         public final TextView mPlaceView;
@@ -116,13 +116,13 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
             mWrapOperation = (FrameLayout) view.findViewById(R.id.wrap_operation);
 
             mAdapter = adapter;
-            mOperationView.setOnClickListener(this);  //  操作ボタンにリスナー設定
+            //mOperationView.setOnClickListener(this);  //  操作ボタンにリスナー設定
 
         }
-        public void onClick(View view){
+        /*public void onClick(View view){
 
             mAdapter.onButtonClick(mView, getAdapterPosition());
-        }
+        }*/
         @Override
         public String toString() {
             return super.toString() + " '" + mOperationView.getText() + "'";
@@ -216,7 +216,7 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
 
             setItemColor(data);
 
-            this.mView.setOnClickListener(new View.OnClickListener() {
+            /*this.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (null != mListener) {
@@ -225,7 +225,7 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
                         //mListener.onListFragmentInteraction(data);
                     }
                 }
-            });
+            });*/
         }
     }
 

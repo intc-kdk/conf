@@ -10,4 +10,5 @@
     android:layout_marginRight="16dp"
     app:layoutManager="LinearLayoutManager"
     tools:context="com.intc_service.confrimationapp.OperationFragment"
-    tools:listitem="@layout/fragment_operatoin" />
+    tools:listitem="@layout/fragment_operatoin"
+    android:paddingBottom="20dp" />

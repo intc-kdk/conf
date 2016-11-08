@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
@@ -22,18 +23,19 @@
     <TextView
         android:id="@+id/action_before"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:textAppearance="?attr/textAppearanceListItem"
         android:width="315dp"
         android:textAlignment="center"
         android:gravity="center_vertical"
         android:textColor="@color/colorText"
-        android:text="【1号】#43E1・#43R1"
+        android:text="【1号】#43E1・#43R1\n111111"
         android:textSize="30sp"
         android:layout_marginBottom="5dp"
         android:layout_marginTop="5dp"
-        android:paddingBottom="5dp"
-        android:paddingTop="5dp" />
+        android:paddingBottom="20dp"
+        android:paddingTop="20dp"
+        android:minHeight="110dp" />
 
     <ImageView
         android:layout_height="match_parent"

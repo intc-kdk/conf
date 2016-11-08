@@ -11,4 +11,5 @@
     app:layoutManager="LinearLayoutManager"
     tools:context="com.intc_service.confrimationapp.ProcedureFragment"
     tools:listitem="@layout/fragment_procedure"
-    android:background="@color/colorBackgroudDefault" />
+    android:background="@color/colorBackgroudDefault"
+    android:paddingBottom="30dp" />

@@ -36,6 +36,8 @@ public class OperationFragment extends Fragment {
     private OperationRecyclerViewAdapter mRecyclerViewAdapter;
 
     private List<OpeItem> ITEMS = new ArrayList<>();
+
+    private final static int MAX_ROW = 6;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -91,10 +93,32 @@ public class OperationFragment extends Fragment {
             // Adapterへの参照
             mRecyclerViewAdapter = (OperationRecyclerViewAdapter)recyclerView.getAdapter();
 
+            // 表示位置の決定
+            int pos = getCurrentPos();
+System.out.println("POS!!!!!!!!!!!!!!!!:"+pos);
+            if(pos >= MAX_ROW){
+                // スクロール (前2手順を表示）
+                ((LinearLayoutManager)recyclerView.getLayoutManager()).scrollToPositionWithOffset(pos,0);
+
+            }
+
         }
         return view;
     }
 
+    private int getCurrentPos(){
+        Iterator<OpeItem> i = ITEMS.iterator();
+        int cnt=0;
+        // ステータスが"1" の操作を取得
+        while(i.hasNext()){
+            OpeItem item = i.next();
+            if(item.cd_status.equals("1")){
+                return cnt;
+            }
+            cnt++;
+        }
+        return cnt;
+    }
 
     @Override
     public void onAttach(Context context) {
