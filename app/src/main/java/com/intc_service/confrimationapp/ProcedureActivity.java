@@ -65,12 +65,9 @@ public class ProcedureActivity extends AppCompatActivity
         mBtnGs = (Button) findViewById(R.id.btn_gs);
         mBtnGs.setOnClickListener(this);
 
-
-
         if(checkPctl()){
             // 盤操作画面からの開始のとき
             startUpOperation();
-
         }else{
             // サーバーからの指示を待機
             recieveFragment.listen();
@@ -205,6 +202,7 @@ public class ProcedureActivity extends AppCompatActivity
             if (bdRecievedData.getString("format").equals("JSON")) {
                  mData = dsHelper.makeSendData("50","");
             }
+
         }
         return mData;
     }
@@ -279,6 +277,9 @@ public class ProcedureActivity extends AppCompatActivity
                 // サーバーからの指示を待機
                 recieveFragment.listen();
             }
+        }else{
+            //想定外コマンドの時も受信待機は継続
+            recieveFragment.listen();
         }
     }
     private void setGenbaSai(){

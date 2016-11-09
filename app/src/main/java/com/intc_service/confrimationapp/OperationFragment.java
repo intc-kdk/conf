@@ -95,7 +95,7 @@ public class OperationFragment extends Fragment {
 
             // 表示位置の決定
             int pos = getCurrentPos();
-System.out.println("POS!!!!!!!!!!!!!!!!:"+pos);
+
             if(pos >= MAX_ROW){
                 // スクロール (前2手順を表示）
                 ((LinearLayoutManager)recyclerView.getLayoutManager()).scrollToPositionWithOffset(pos,0);

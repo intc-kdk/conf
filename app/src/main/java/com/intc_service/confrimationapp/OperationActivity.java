@@ -248,6 +248,9 @@ public class OperationActivity extends AppCompatActivity
         }else if(cmd.equals("99")) { // accept キャンセル
             // ここでは何もせず、応答の"99"受信で処理
 
+        }else{
+            //想定外コマンドの時も受信待機は継続
+            recieveFragment.listen();
         }
 
     }
