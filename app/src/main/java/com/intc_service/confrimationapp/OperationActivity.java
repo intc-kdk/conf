@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.intc_service.confrimationapp.Util.DataStructureUtil;
 import com.intc_service.confrimationapp.Util.OperationDataUtil;
 import com.intc_service.confrimationapp.Util.OperationDataUtil.OpeItem;
+import com.intc_service.confrimationapp.Util.alertDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -115,18 +116,14 @@ public class OperationActivity extends AppCompatActivity
         String cmd = (String)dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
         Bundle bdRecievedData = dsHelper.getRecievedData();  // 渡したデータを解析し、Bundleを返す
         // コマンド[22]応答受信
-        if(cmd.equals("60")) {
-
-//            String date = bdRecievedData.getString("ts_b");
-//            String[] arrDate = date.split(" ");
-//            returnTime = arrDate[1];
+        if (cmd.equals("60")) {
             returnTime = bdRecievedData.getString("ts_b");
             sendFragment.halt("99@$");
 
-        }else if (cmd.equals("6N")) {
+        } else if (cmd.equals("6N")) {
             // コマンド[23]応答受信
             if (bdRecievedData.getString("format").equals("TEXT")) {
-                if(mGs.equals("1")){  // SKIP
+                if (mGs.equals("1")) {  // SKIP
                     // スキップの時はそのまま戻る
                     OpeItem item = mOpeFragment.getCurrentItem();
                     returnSno = item.in_sno;
@@ -136,21 +133,27 @@ public class OperationActivity extends AppCompatActivity
 
                     sendFragment.halt("99@$");
 
-                }else if(mGs.equals("2")){  //追加
+                } else if (mGs.equals("2")) {  //追加
                     // bo_gs tx_gs を更新して、盤操作可にして継続
                     mOpeFragment.updateGs("追加");
                     mGs = "0";
-                }else{  //  キャンセル  # ここは通らない
+                } else {  //  キャンセル  # ここは通らない
 
                 }
 
                 // メッセージ消す
-                mGs="0";
+                mGs = "0";
                 setGenbaSai();
             }
-        }else if(cmd.equals("99")){
+        } else if (cmd.equals("99")) {  // サーバークローズ
             recieveFragment.closeServer(); //待ち受けを中止する。
             returnProcedureActivity();
+        } else if (cmd.equals("91")) {  // 受信エラー処理
+            System.out.println("※※※※　受信エラー ※※※"+data);
+            alertDialog.show(this, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
+        } else if (cmd.equals("92")) {  // タイムアウト
+            System.out.println("※※※※　受信タイムアウト ※※※"+data);
+            alertDialog.show(this, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
         }
 
         // TODO: [P] ログを取得
@@ -215,17 +218,21 @@ public class OperationActivity extends AppCompatActivity
     public String onRequestRecieved(String data) {
         // サーバーからの要求（data）を受信
         //System.out.println("ReqRecieved:"+data);
+        String mData = "";
         DataStructureUtil dsHelper = new DataStructureUtil();
 
         String cmd = dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
         Bundle bdRecievedData = dsHelper.getRecievedData();  // 渡したデータを解析し、Bundleを返す
-        String mData = "";
-        if(cmd.equals("64")) { //現場差異指令
+        if (cmd.equals("64")) { //現場差異指令
             if (bdRecievedData.getString("format").equals("JSON")) {
-                mData = dsHelper.makeSendData("50","");
+                mData = dsHelper.makeSendData("50", "");
             }
-        }else if(cmd.equals("99")){
+        } else if (cmd.equals("99")) {
             mData = "99@$";
+        } else if (cmd.equals("91")) {  // 受信エラー処理 onFinishRecieveProgress で処理
+            mData = "";
+        } else if (cmd.equals("92")) {  // タイムアウト onFinishRecieveProgress で処理
+            mData = "";
         }
         return mData;
     }
@@ -237,7 +244,7 @@ public class OperationActivity extends AppCompatActivity
 
         String cmd = dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
         Bundle bdRecievedData = dsHelper.getRecievedData();  // 渡したデータを解析し、Bundleを返す
-        if(cmd.equals("64")) { //現場差異指令
+        if (cmd.equals("64")) { //現場差異指令
             if (bdRecievedData.getString("format").equals("JSON")) {
                 mGs = bdRecievedData.getString("Com"); // 指示フラグを退避
                 // 現場差異表示
@@ -245,10 +252,20 @@ public class OperationActivity extends AppCompatActivity
                 // サーバーからの指示を待機
                 recieveFragment.listen();
             }
-        }else if(cmd.equals("99")) { // accept キャンセル
+        } else if (cmd.equals("99")) { // accept キャンセル
             // ここでは何もせず、応答の"99"受信で処理
 
-        }else{
+        } else if (cmd.equals("91")) {  // 受信エラー処理
+            System.out.println("※※※※　受信エラー ※※※"+data);
+            alertDialog.show(this, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
+            //想定外コマンドの時も受信待機は継続
+            recieveFragment.listen();
+        } else if (cmd.equals("92")) {  // タイムアウト
+            System.out.println("※※※※　受信タイムアウト ※※※"+data);
+            alertDialog.show(this, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
+            //想定外コマンドの時も受信待機は継続
+            recieveFragment.listen();
+        } else {
             //想定外コマンドの時も受信待機は継続
             recieveFragment.listen();
         }

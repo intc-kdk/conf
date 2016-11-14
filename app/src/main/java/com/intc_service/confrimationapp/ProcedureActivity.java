@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.intc_service.confrimationapp.Util.DataStructureUtil;
 import com.intc_service.confrimationapp.Util.DataStructureUtil.ProcItem;
+import com.intc_service.confrimationapp.Util.alertDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -144,38 +145,43 @@ public class ProcedureActivity extends AppCompatActivity
 
         String cmd = dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
         Bundle bdRecievedData = dsHelper.getRecievedData();  // 渡したデータを解析し、Bundleを返す
-        if(cmd.equals("6N")) { //現場差異応答
+        if (cmd.equals("6N")) { //現場差異応答
             if (bdRecievedData.getString("format").equals("TEXT")) {
                 int position = mProcFragment.getCurrentPos();
-                String tx_gs="";
-                String status="";
+                String tx_gs = "";
+                String status = "";
                 // cd_status スキップは"7", 追加は "0"
-                if(mGs.equals("1")){  // SKIP
-                    status="7";
-                    tx_gs="スキップ";
-                }else if(mGs.equals("2")){  //追加
-                    status="1";
-                    tx_gs="追加";
-                }else{  //  キャンセル  # ここは通らない
+                if (mGs.equals("1")) {  // SKIP
+                    status = "7";
+                    tx_gs = "スキップ";
+                } else if (mGs.equals("2")) {  //追加
+                    status = "1";
+                    tx_gs = "追加";
+                } else {  //  キャンセル  # ここは通らない
 
                 }
 
                 mProcFragment.setProcStatus(position, status, "", "True", tx_gs);   // 対象のエントリの更新
                 // TODO: 最終エントリの判定要
 
-                if(mGs.equals("1")) {  // SKIP
+                if (mGs.equals("1")) {  // SKIP
                     mProcFragment.updateProcedure();   // SKIPは次のエントリへ進める
-                }else{
+                } else {
                     mProcFragment.addProcedure();   // 追加はそのままの手順
                 }
                 // メッセージ消す
-                mGs="0";
+                mGs = "0";
                 setGenbaSai();
 
             }
 
+        } else if (cmd.equals("91")) {  // 受信エラー処理
+            System.out.println("※※※※　受信エラー ※※※"+data);
+            alertDialog.show(this, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
+        } else if (cmd.equals("92")) {  // タイムアウト
+            System.out.println("※※※※　受信タイムアウト ※※※"+data);
+            alertDialog.show(this, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
         }
-
     }
 
     @Override
@@ -189,21 +195,27 @@ public class ProcedureActivity extends AppCompatActivity
     public String onRequestRecieved(String data){
         // サーバーからの要求（data）を受信
          //System.out.println("ReqRecieved:"+data);
+        String mData = "";
         DataStructureUtil dsHelper = new DataStructureUtil();
 
         String cmd = dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
+
         Bundle bdRecievedData = dsHelper.getRecievedData();  // 渡したデータを解析し、Bundleを返す
-        String mData = "";
-        if(cmd.equals("63")) { //指示命令
+        if (cmd.equals("63")) { //指示命令
             if (bdRecievedData.getString("format").equals("TEXT")) {
-                 mData = dsHelper.makeSendData("50","");
+                mData = dsHelper.makeSendData("50", "");
             }
-        }else if(cmd.equals("64")) { //現場差異指令
+        } else if (cmd.equals("64")) { //現場差異指令
             if (bdRecievedData.getString("format").equals("JSON")) {
-                 mData = dsHelper.makeSendData("50","");
+                mData = dsHelper.makeSendData("50", "");
             }
 
+        } else if (cmd.equals("91")) {  // 受信エラー処理 onFinishRecieveProgress で処理
+            mData = "";
+        } else if (cmd.equals("92")) {  // タイムアウト onFinishRecieveProgress で処理
+            mData = "";
         }
+
         return mData;
     }
 
@@ -261,14 +273,15 @@ public class ProcedureActivity extends AppCompatActivity
         DataStructureUtil dsHelper = new DataStructureUtil();
 
         String cmd = dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
+
         Bundle bdRecievedData = dsHelper.getRecievedData();  // 渡したデータを解析し、Bundleを返す
-        if(cmd.equals("63")) { //指示命令
+        if (cmd.equals("63")) { //指示命令
             if (bdRecievedData.getString("format").equals("TEXT")) {
                 //盤操作画面を起動
                 startUpOperation();
 
             }
-        }else if(cmd.equals("64")) { //現場差異指令
+        } else if (cmd.equals("64")) { //現場差異指令
             if (bdRecievedData.getString("format").equals("JSON")) {
                 mGs = bdRecievedData.getString("Com");
                 // 現場差異表示
@@ -277,7 +290,17 @@ public class ProcedureActivity extends AppCompatActivity
                 // サーバーからの指示を待機
                 recieveFragment.listen();
             }
-        }else{
+        } else if (cmd.equals("91")) {  // 受信エラー処理
+            System.out.println("※※※※　受信エラー ※※※");
+            alertDialog.show(this, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
+            //想定外コマンドの時も受信待機は継続
+            recieveFragment.listen();
+        } else if (cmd.equals("92")) {  // タイムアウト
+            System.out.println("※※※※　受信タイムアウト ※※※");
+            alertDialog.show(this, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
+            //想定外コマンドの時も受信待機は継続
+            recieveFragment.listen();
+        } else {
             //想定外コマンドの時も受信待機は継続
             recieveFragment.listen();
         }

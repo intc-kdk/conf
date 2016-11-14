@@ -11,7 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 
 import com.intc_service.confrimationapp.Util.DataStructureUtil;
-import com.intc_service.confrimationapp.Util.SettingPrefUtil;
+import com.intc_service.confrimationapp.Util.alertDialog;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -81,20 +81,26 @@ public class WaitActivity extends AppCompatActivity
         String cmd = (String)dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
         Bundle bdRecievedData = dsHelper.getRecievedData();  // 渡したデータを解析し、Bundleを返す
 
-        if(cmd.equals(CMD61)){ //起動応答
-            if(bdRecievedData.getString("format").equals("TEXT")) {
+        if (cmd.equals(CMD61)) { //起動応答
+            if (bdRecievedData.getString("format").equals("TEXT")) {
                 mPanelNo = bdRecievedData.getString("text");  // 画面番号を取得
             }
-
-        }else if (cmd.equals(CMD62)){  // 手順書応答
-            if(bdRecievedData.getString("format").equals("JSON")) {
+            onFinishRecieveProgress(data);   // 受信状況判定
+        } else if (cmd.equals(CMD62)) {  // 手順書応答
+            if (bdRecievedData.getString("format").equals("JSON")) {
                 //ArrayList arrTejun = (ArrayList)bdRecievedData.getParcelableArrayList("tejun"); //手順書データを取り出す
-                mProcedure=data;
-                mRecieved=true;  // 手順書受信済みを設定
+                mProcedure = data;
+                mRecieved = true;  // 手順書受信済みを設定
             }
+            onFinishRecieveProgress(data);   // 受信状況判定
+        } else if (cmd.equals("91")) {  // 受信エラー処理
+            System.out.println("※※※※　受信エラー ※※※"+data);
+            alertDialog.show(this, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
+        } else if (cmd.equals("92")) {  // タイムアウト
+            System.out.println("※※※※　受信タイムアウト ※※※"+data);
+            alertDialog.show(this, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
         }
 
-        onFinishRecieveProgress(data);   // 受信状況判定
 
         // TODO: [P] ログを取得
 
@@ -110,16 +116,21 @@ public class WaitActivity extends AppCompatActivity
     public String onRequestRecieved(String data){
         // サーバーからの要求（data）を受信
         // System.out.println("ReqRecieved:"+data);
+        String mData = "";
         DataStructureUtil dsHelper = new DataStructureUtil();
 
         String cmd = dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
+
         Bundle bdRecievedData = dsHelper.getRecievedData();  // 渡したデータを解析し、Bundleを返す
-        String mData = "";
-        if(cmd.equals(CMD61)) { //起動応答
+        if (cmd.equals(CMD61)) { //起動応答
             if (bdRecievedData.getString("format").equals("TEXT")) {
                 mPanelNo = bdRecievedData.getString("text");  // 画面番号を取得
-                mData = dsHelper.makeSendData("50","");
+                mData = dsHelper.makeSendData("50", "");
             }
+        } else if (cmd.equals("91")) {  // 受信エラー処理 onFinishRecieveProgress で処理
+            mData = "";
+        } else if (cmd.equals("92")) {  // タイムアウト onFinishRecieveProgress で処理
+            mData = "";
         }
 
         return mData;
@@ -129,25 +140,34 @@ public class WaitActivity extends AppCompatActivity
         // 受信状況判定
 
         DataStructureUtil dsHelper = new DataStructureUtil();
-        //System.out.println(mPanelNo+":"+mRecieved);
-        if(mPanelNo.equals("0") && mRecieved){
-            // 画面番号が "0:指示待ち画面で、手順書受信済みの時 サーバーからの通知を待つ
-            recieveFragment.listen();
-        }
-        else if(mPanelNo.equals("1") && mRecieved){
-            // 画面番号が "1:手順書画面で、手順書受信済みの時 手順書画面へ
+        String cmd = dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
+        Bundle bdRecievedData = dsHelper.getRecievedData();  // 渡したデータを解析し、Bundleを返す
+        if (cmd.equals("91")) {  // 受信エラー処理
+            System.out.println("※※※※　受信エラー ※※※");
+            alertDialog.show(this, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
+        } else if (cmd.equals("92")) {  // タイムアウト
+            System.out.println("※※※※　受信タイムアウト ※※※");
+            alertDialog.show(this, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
+        }else {
+            //System.out.println(mPanelNo+":"+mRecieved);
+            if (mPanelNo.equals("0") && mRecieved) {
+                // 画面番号が "0:指示待ち画面で、手順書受信済みの時 サーバーからの通知を待つ
+                recieveFragment.listen();
+            } else if (mPanelNo.equals("1") && mRecieved) {
+                // 画面番号が "1:手順書画面で、手順書受信済みの時 手順書画面へ
 
-            recieveFragment.closeServer();
-            Intent intent = new Intent(this, ProcedureActivity.class);
+                recieveFragment.closeServer();
+                Intent intent = new Intent(this, ProcedureActivity.class);
 
-            intent.putExtra("proc", mProcedure);
-            startActivity(intent);
-        }
-        //else if(mPanelNo.equals("1") && !mRecieved){
-        else if(!mRecieved){
-            // 手順書未受信のときは 21を送信
-            String mData = dsHelper.makeSendData("21","");
-            sendFragment.send(mData);
+                intent.putExtra("proc", mProcedure);
+                startActivity(intent);
+            }
+            //else if(mPanelNo.equals("1") && !mRecieved){
+            else if (!mRecieved) {
+                // 手順書未受信のときは 21を送信
+                String mData = dsHelper.makeSendData("21", "");
+                sendFragment.send(mData);
+            }
         }
 
     }

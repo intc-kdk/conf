@@ -32,13 +32,14 @@ import java.net.SocketException;
  * create an instance of this fragment.
  */
 public class ReceptionFragment extends Fragment {
-    private static final String ARG_PORT = "port";
 
     private ServerSocket mServer = null;
     private Socket mSocket = null;
     private int mPort;
     private BufferedReader reader = null;
     private ReceptionFragmentListener mListener;
+
+    private final int timeout = 1000;
 
     public ReceptionFragment() {
         // Required empty public constructor
@@ -114,6 +115,7 @@ System.out.println("☆☆☆ ソケット新規作成 ☆☆☆");
 System.out.println("◆◆◆ ソケットリユース ◆◆◆");
                     }
                     mSocket = mServer.accept();
+                    mSocket.setSoTimeout(timeout);
                     reader = new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
                     writer = new BufferedWriter(new OutputStreamWriter(mSocket.getOutputStream()));
 
@@ -129,6 +131,13 @@ System.out.println("◆◆◆ ソケットリユース ◆◆◆");
                     message=builder.toString();
                     AppLogRepository.create(context,"R",message);
 System.out.println("<< サーバーから受信 >>"+message);
+
+                    if(message.length() == 0 || message.indexOf("$") < 0 ){
+                        // 受信サイズ0
+                        System.out.println("Recieved illegal data");
+                        message = "91@Recieved illegal data$";
+                        AppLogRepository.create(context,"E",message);
+                    }
                     // Activity へ リクエストを返し、返信データ（response）を受け取る
                     response = ((ReceptionFragmentListener)getActivity()).onRequestRecieved(message);
 
@@ -153,6 +162,9 @@ System.out.println("<< サーバーへ送信 >>"+response);
                     System.out.println("＝＝＝ accept() キャンセル ＝＝＝");
                     e.printStackTrace();
                 }catch(IOException e){
+                    System.out.println("Exception error");
+                    message = "92@Exception error: " + e.getMessage()+"$";
+                    AppLogRepository.create(context,"E",message);
                     e.printStackTrace();
                 } finally {
                     try{

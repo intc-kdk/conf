@@ -5,4 +5,8 @@
 
     <string name="genbasai_text_add">指示者から手順の追加が指示されています。確認ができたら現場差異を押してください。</string>
     <string name="genbasai_text_skip">指示者から手順のスキップを指示されています。確認ができたら現場差異を押してください。</string>
+
+    <string name="nw_err_title">サーバと通信できません。</string>
+    <string name="nw_err_message">サーバ・ネットワークを確認して、再度アプリケーションを起動してください。</string>
+
 </resources>
