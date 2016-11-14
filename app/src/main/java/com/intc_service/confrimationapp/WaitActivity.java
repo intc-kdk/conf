@@ -3,18 +3,12 @@ package com.intc_service.confrimationapp;
 import android.app.FragmentManager;
 
 import android.app.FragmentTransaction;
-import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.MotionEvent;
 
 import com.intc_service.confrimationapp.Util.DataStructureUtil;
-import com.intc_service.confrimationapp.Util.alertDialog;
-
-import java.io.Serializable;
-import java.util.ArrayList;
+import com.intc_service.confrimationapp.Util.alertDialogUtil;
 
 /*
  *  K-01 指示待ち画面
@@ -95,10 +89,10 @@ public class WaitActivity extends AppCompatActivity
             onFinishRecieveProgress(data);   // 受信状況判定
         } else if (cmd.equals("91")) {  // 受信エラー処理
             System.out.println("※※※※　受信エラー ※※※"+data);
-            alertDialog.show(this, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
+            alertDialogUtil.show(this, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
         } else if (cmd.equals("92")) {  // タイムアウト
             System.out.println("※※※※　受信タイムアウト ※※※"+data);
-            alertDialog.show(this, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
+            alertDialogUtil.show(this, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
         }
 
 
@@ -144,10 +138,10 @@ public class WaitActivity extends AppCompatActivity
         Bundle bdRecievedData = dsHelper.getRecievedData();  // 渡したデータを解析し、Bundleを返す
         if (cmd.equals("91")) {  // 受信エラー処理
             System.out.println("※※※※　受信エラー ※※※");
-            alertDialog.show(this, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
+            alertDialogUtil.show(this, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
         } else if (cmd.equals("92")) {  // タイムアウト
             System.out.println("※※※※　受信タイムアウト ※※※");
-            alertDialog.show(this, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
+            alertDialogUtil.show(this, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
         }else {
             //System.out.println(mPanelNo+":"+mRecieved);
             if (mPanelNo.equals("0") && mRecieved) {
