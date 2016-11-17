@@ -19,7 +19,8 @@
         </activity>
         <activity android:name=".ProcedureActivity" />
         <activity android:name=".OperationActivity" />
-        <activity android:name=".EndActivity"></activity>
+        <activity android:name=".EndActivity" />
+        <activity android:name=".EndOffActivity"></activity>
     </application>
 
 </manifest>

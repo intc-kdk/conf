@@ -206,7 +206,8 @@ public class ProcedureActivity extends AppCompatActivity
             if (bdRecievedData.getString("format").equals("JSON")) {
                 mData = dsHelper.makeSendData("50", "");
             }
-
+        } else if (cmd.equals("9C")) {  // 電源OFF画面 onFinishRecieveProgress で処理
+            mData = "50@$";
         } else if (cmd.equals("91")) {  // 受信エラー処理 onFinishRecieveProgress で処理
             mData = "";
         } else if (cmd.equals("92")) {  // タイムアウト onFinishRecieveProgress で処理
@@ -287,6 +288,9 @@ public class ProcedureActivity extends AppCompatActivity
                 // サーバーからの指示を待機
                 recieveFragment.listen();
             }
+        } else if (cmd.equals("9C")) {  // 電源OFF画面
+            Intent intent = new Intent(this, EndOffActivity.class);
+            startActivity(intent);
         } else if (cmd.equals("91")) {  // 受信エラー処理
             System.out.println("※※※※　受信エラー ※※※");
             alertDialogUtil.show(this, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));

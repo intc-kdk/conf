@@ -223,6 +223,8 @@ public class OperationActivity extends AppCompatActivity
             if (bdRecievedData.getString("format").equals("JSON")) {
                 mData = dsHelper.makeSendData("50", "");
             }
+        } else if (cmd.equals("9C")) {  // 電源OFF画面
+            mData="50@$";
         } else if (cmd.equals("99")) {
             mData = "99@$";
         } else if (cmd.equals("91")) {  // 受信エラー処理 onFinishRecieveProgress で処理
@@ -248,6 +250,9 @@ public class OperationActivity extends AppCompatActivity
                 // サーバーからの指示を待機
                 recieveFragment.listen();
             }
+        } else if (cmd.equals("9C")) {  // 電源OFF画面
+            Intent intent = new Intent(this, EndOffActivity.class);
+            startActivity(intent);
         } else if (cmd.equals("99")) { // accept キャンセル
             // ここでは何もせず、応答の"99"受信で処理
 

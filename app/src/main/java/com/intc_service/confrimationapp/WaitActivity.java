@@ -121,6 +121,8 @@ public class WaitActivity extends AppCompatActivity
                 mPanelNo = bdRecievedData.getString("text");  // 画面番号を取得
                 mData = dsHelper.makeSendData("50", "");
             }
+        } else if (cmd.equals("9C")) {  // 電源OFF画面
+            mData = "50@$";
         } else if (cmd.equals("91")) {  // 受信エラー処理 onFinishRecieveProgress で処理
             mData = "";
         } else if (cmd.equals("92")) {  // タイムアウト onFinishRecieveProgress で処理
@@ -136,7 +138,10 @@ public class WaitActivity extends AppCompatActivity
         DataStructureUtil dsHelper = new DataStructureUtil();
         String cmd = dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
         Bundle bdRecievedData = dsHelper.getRecievedData();  // 渡したデータを解析し、Bundleを返す
-        if (cmd.equals("91")) {  // 受信エラー処理
+        if (cmd.equals("9C")) {  // 電源OFF画面
+            Intent intent = new Intent(this, EndOffActivity.class);
+            startActivity(intent);
+        }else if (cmd.equals("91")) {  // 受信エラー処理
             System.out.println("※※※※　受信エラー ※※※");
             alertDialogUtil.show(this, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
         } else if (cmd.equals("92")) {  // タイムアウト
