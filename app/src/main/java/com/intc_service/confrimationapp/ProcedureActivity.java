@@ -34,11 +34,16 @@ public class ProcedureActivity extends AppCompatActivity
 
     private String mGs = "0";
     private Button mBtnGs;
+    private boolean noTap;
+    private boolean endProcedure;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_procedure);
+
+        noTap=true;
+        endProcedure=false;
 
         //  手順書フラグメントの取得
         mProcFragment = (ProcedureFragment)getSupportFragmentManager()
@@ -103,12 +108,15 @@ public class ProcedureActivity extends AppCompatActivity
         switch (id){
             case R.id.btn_gs: // 現場差異ボタンクリック
                 if(!mGs.equals("0")){
-                    // 現在の手順を取得
-                    String in_sno = mProcFragment.getCurrentSno();
-                    // サーバーへ現場差異確認[23]送信
-                    DataStructureUtil dsHelper = new DataStructureUtil();
-                    String mData = dsHelper.makeSendData("23","{\"in_sno\":\""+in_sno+"\"}");
-                    sendFragment.send(mData);
+                    if(noTap) {
+                        // 現在の手順を取得
+                        String in_sno = mProcFragment.getCurrentSno();
+                        // サーバーへ現場差異確認[23]送信
+                        DataStructureUtil dsHelper = new DataStructureUtil();
+                        String mData = dsHelper.makeSendData("23", "{\"in_sno\":\"" + in_sno + "\"}");
+                        sendFragment.send(mData);
+                        noTap=false; // 連続タップ防止のフラグ
+                    }
                 }
                 break;
         }
@@ -157,21 +165,38 @@ public class ProcedureActivity extends AppCompatActivity
                 } else {  //  キャンセル  # ここは通らない
 
                 }
+                int in_sno = Integer.parseInt(mProcFragment.getCurrentSno()); // ステータス更新前に、in_snoを取得しておく
 
                 mProcFragment.setProcStatus(position, status, "", "True", tx_gs);   // 対象のエントリの更新
-                // TODO: 最終エントリの判定要
 
                 if (mGs.equals("1")) {  // SKIP
-                    mProcFragment.updateProcedure();   // SKIPは次のエントリへ進める
+                    // 最終の手順か判定
+                    if (mProcFragment.getLastInSno() > in_sno) {
+                        // 継続の時は次のエントリへ進める
+                        mProcFragment.updateProcedure();
+                    } else {
+                        // 最終手順のスキップであることを記録
+                        endProcedure = true;
+                        // 最終手順の時、listenを停止して終了画面表示へ
+                        sendFragment.halt("99@$");
+                    }
                 } else {
-                    mProcFragment.addProcedure();   // 追加はそのままの手順
+                    mProcFragment.addProcedure();   // 追加はそのままの手順で待機
                 }
                 // メッセージ消す
                 mGs = "0";
                 setGenbaSai();
-
+                noTap = true; //連続タップ抑止解除
             }
-
+        }else if (cmd.equals("6R")) { //現場差異応答(拒否）
+            noTap = true; //連続タップ抑止解除
+        } else if (cmd.equals("99")) {  // サーバークローズ
+            recieveFragment.closeServer(); //待ち受けを中止する。
+            if(endProcedure) {
+                // 最終手順のスキップだった時、終了画面表示
+                Intent intent = new Intent(this, EndActivity.class);
+                startActivity(intent);
+            }
         } else if (cmd.equals("91")) {  // 受信エラー処理
             System.out.println("※※※※　受信エラー ※※※"+data);
             alertDialogUtil.show(this, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
@@ -208,6 +233,8 @@ public class ProcedureActivity extends AppCompatActivity
             }
         } else if (cmd.equals("9C")) {  // 電源OFF画面 onFinishRecieveProgress で処理
             mData = "50@$";
+        } else if (cmd.equals("99")) {
+            mData = "99@$";
         } else if (cmd.equals("91")) {  // 受信エラー処理 onFinishRecieveProgress で処理
             mData = "";
         } else if (cmd.equals("92")) {  // タイムアウト onFinishRecieveProgress で処理
@@ -291,6 +318,8 @@ public class ProcedureActivity extends AppCompatActivity
         } else if (cmd.equals("9C")) {  // 電源OFF画面
             Intent intent = new Intent(this, EndOffActivity.class);
             startActivity(intent);
+        } else if (cmd.equals("99")) { // accept キャンセル
+            // ここでは何もせず、応答の"99"受信で処理
         } else if (cmd.equals("91")) {  // 受信エラー処理
             System.out.println("※※※※　受信エラー ※※※");
             alertDialogUtil.show(this, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));

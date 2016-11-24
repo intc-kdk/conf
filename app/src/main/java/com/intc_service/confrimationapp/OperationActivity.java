@@ -41,14 +41,15 @@ public class OperationActivity extends AppCompatActivity
 
     private String mGs="0";
     private Button mBtnGs;
-
+    private boolean noTap;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_operation);
 
+        noTap = true;
+
         Intent intent = getIntent();
-        //mBundleCur = intent.getBundleExtra("current");
 
         //  手順書フラグメントの取得
         mOpeFragment = (OperationFragment)getSupportFragmentManager()
@@ -140,7 +141,10 @@ public class OperationActivity extends AppCompatActivity
                 // メッセージ消す
                 mGs = "0";
                 setGenbaSai();
+                noTap=true; //連続タップ抑止解除
             }
+        }else if (cmd.equals("6R")) { //現場差異応答(拒否）
+            noTap = true; //連続タップ抑止解除
         } else if (cmd.equals("99")) {  // サーバークローズ
             recieveFragment.closeServer(); //待ち受けを中止する。
             returnProcedureActivity();
@@ -196,14 +200,16 @@ public class OperationActivity extends AppCompatActivity
         switch (id){
             case R.id.btn_gs_ope: // 現場差異確認ボタンクリック
                 if(!mGs.equals("0")){ // 現場差異の指示があるとき
-
-                    // 対象の手順を取得
-                    //String in_sno = mOpeFragment.getCurrentSno();
-                    OpeItem item = mOpeFragment.getCurrentItem();
-                    // サーバーへ現場差異確認[23]送信
-                    DataStructureUtil dsHelper = new DataStructureUtil();
-                    String mData = dsHelper.makeSendData("23","{\"in_sno\":\""+item.in_sno+"\"}");
-                    sendFragment.send(mData);
+                    if(noTap) {
+                        // 対象の手順を取得
+                        //String in_sno = mOpeFragment.getCurrentSno();
+                        OpeItem item = mOpeFragment.getCurrentItem();
+                        // サーバーへ現場差異確認[23]送信
+                        DataStructureUtil dsHelper = new DataStructureUtil();
+                        String mData = dsHelper.makeSendData("23","{\"in_sno\":\""+item.in_sno+"\"}");
+                        sendFragment.send(mData);
+                        noTap=false; // 連続タップ防止のフラグ
+                    }
                 }
                 break;
         }

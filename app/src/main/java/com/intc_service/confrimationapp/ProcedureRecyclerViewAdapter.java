@@ -257,14 +257,6 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
         return mValues.get(position);
 
     }
-    public ProcItem getPairItem(int sno, String swno){
-        for(ProcItem item : mValues){
-            if(item.in_swno.equals(swno) && item.in_sno != sno){
-                return item;
-            }
-        }
-        return null;
-    }
     public ArrayList<Bundle> getBoardItems(String bno) {
         Iterator<ProcItem> i = mValues.iterator();
         ArrayList<Bundle> sw = new ArrayList<>();
