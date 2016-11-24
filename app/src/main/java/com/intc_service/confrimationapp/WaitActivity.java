@@ -33,14 +33,6 @@ public class WaitActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wait);
 
-        // [P] 画面起動ログ取得
-
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
         // [P] 起動電文を作成
         DataStructureUtil ds = new DataStructureUtil();
         String mData = ds.makeSendData("20","");
