@@ -68,13 +68,24 @@ public class ProcedureActivity extends AppCompatActivity
         mBtnGs = (Button) findViewById(R.id.btn_gs);
         mBtnGs.setOnClickListener(this);
 
+        // 現場差異の指示を確認
+        String gsmode = checkGsmode();
+        if(gsmode.equals("5")) {  // スキップ
+            mGs="1"; // 現場差異フラグに 1：スキップを設定
+        }else if(gsmode.equals("6")){  // 追加
+            mGs="2"; // 現場差異フラグに 2：追加を設定
+        }
         if(checkPctl()){
             // 盤操作画面からの開始のとき
             startUpOperation();
+            mGs="0";  // 現場差異モードは初期化
         }else{
             // サーバーからの指示を待機
             recieveFragment.listen();
         }
+
+        // 現場差異表示
+        setGenbaSai();
 
 
     }
@@ -95,6 +106,18 @@ public class ProcedureActivity extends AppCompatActivity
             return false;
         }
 
+    }
+    private String checkGsmode(){
+        // 手順データをIntentから取得
+        Intent intent = getIntent();
+        String resultSt = intent.getStringExtra("proc");
+
+        // 手順データを解析し、tejunを取り出す
+        DataStructureUtil dsHelper = new DataStructureUtil();
+        String cmd = dsHelper.setRecievedData(resultSt);
+        Bundle tmpBundle = dsHelper.getRecievedData().getBundle("t_sno");
+        // 現場差異の状態（cd_gsmode)を返す
+        return tmpBundle.getString("cd_gsmode");
     }
     @Override
     protected void onStart() {
@@ -288,6 +311,7 @@ public class ProcedureActivity extends AppCompatActivity
 
         // 対象の盤情報を取得し、intentへ設定
         intent.putExtra("current",mProcFragment.getCurrentBoard());
+        intent.putExtra("gsmode",mGs);
         //盤操作画面を起動
         startActivityForResult(intent, REQUEST_CODE_OPERATION);
     }

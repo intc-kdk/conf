@@ -49,8 +49,6 @@ public class OperationActivity extends AppCompatActivity
 
         noTap = true;
 
-        Intent intent = getIntent();
-
         //  手順書フラグメントの取得
         mOpeFragment = (OperationFragment)getSupportFragmentManager()
                 .findFragmentById(R.id.OperetionList);
@@ -76,6 +74,12 @@ public class OperationActivity extends AppCompatActivity
         mBtnGs.setOnClickListener(this);
 
         recieveFragment.listen();
+
+        // 現場差異の指示を確認
+        Intent intent = getIntent();
+        mGs = intent.getStringExtra("gsmode");
+        // 現場差異表示
+        setGenbaSai();
 
     }
     private void setTextView() {
