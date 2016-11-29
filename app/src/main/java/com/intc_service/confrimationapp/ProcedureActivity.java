@@ -218,6 +218,9 @@ public class ProcedureActivity extends AppCompatActivity
             }
         }else if (cmd.equals("6R")) { //現場差異応答(拒否）
             noTap = true; //連続タップ抑止解除
+        }else if (cmd.equals("9C")) {  // 電源OFF画面
+            Intent intent = new Intent(this, EndOffActivity.class);
+            startActivity(intent);
         } else if (cmd.equals("99")) {  // サーバークローズ
             recieveFragment.closeServer(); //待ち受けを中止する。
             if(endProcedure) {
