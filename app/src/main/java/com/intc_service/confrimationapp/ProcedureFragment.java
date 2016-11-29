@@ -146,7 +146,7 @@ public class ProcedureFragment extends Fragment {
         }else {
             // 現在位置を設定
             mCurrentPos = pos;
-            setProcStatus(mCurrentPos, "1","","False","");
+            setProcStatus(mCurrentPos, "1", mItems.get(mCurrentPos).ts_b, mItems.get(mCurrentPos).bo_gs,mItems.get(mCurrentPos).tx_gs);
         }
 
         if(done){ // 実行済み手順あり（手順再開）の場合、一つ前の手順までスクロール
@@ -235,5 +235,9 @@ public class ProcedureFragment extends Fragment {
 
     public String getCurrentSno(){
         return mRecyclerViewAdapter.getCurrentSno();
+    }
+
+    public ProcItem getCurrentItem(){
+        return mRecyclerViewAdapter.getCurrentItem();
     }
 }

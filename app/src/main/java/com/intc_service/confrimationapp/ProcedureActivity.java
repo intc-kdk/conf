@@ -73,7 +73,12 @@ public class ProcedureActivity extends AppCompatActivity
         if(gsmode.equals("5")) {  // スキップ
             mGs="1"; // 現場差異フラグに 1：スキップを設定
         }else if(gsmode.equals("6")){  // 追加
-            mGs="2"; // 現場差異フラグに 2：追加を設定
+            // 追加確認済みか判定
+            ProcItem item = mProcFragment.getCurrentItem();
+            if(!item.tx_gs.equals("追加")){
+                // tx_gsが追加ではない場合、現場差異フラグに 2：追加を設定
+                mGs = "2";
+            }
         }
         if(checkPctl()){
             // 盤操作画面からの開始のとき

@@ -282,4 +282,15 @@ public class ProcedureRecyclerViewAdapter extends RecyclerView.Adapter<Procedure
 
         return null;
     }
+    public ProcItem getCurrentItem(){
+        Iterator<ProcItem> i = mValues.iterator();
+        while(i.hasNext()){
+            ProcItem item = i.next();
+            if(item.cd_status.equals("1")){
+                return item;
+            }
+        }
+
+        return null;
+    }
 }
