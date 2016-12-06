@@ -17,6 +17,7 @@ public class alertDialogUtil {
 
     public static void show(Activity activity, final TransmissionFragment sendFragment, String title, String msg){
         new AlertDialog.Builder(activity)
+                .setCancelable(false)
                 .setTitle(title)
                 .setMessage(msg)
                 .setIcon(R.drawable.error)

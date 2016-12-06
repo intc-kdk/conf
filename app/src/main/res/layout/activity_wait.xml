@@ -24,4 +24,22 @@
         android:gravity="center"
         android:lineSpacingMultiplier="1.5" />
 
+    <Button
+        android:text="画面更新"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btn_update"
+        android:layout_gravity="right"
+        android:textSize="30sp"
+        android:width="70dp"
+        android:height="80dp"
+        android:textColor="@color/colorTextBlack"
+        android:background="@drawable/bg_diff_on"
+        android:layout_marginTop="2dp"
+        android:layout_marginRight="2dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true" />
+
 </RelativeLayout>

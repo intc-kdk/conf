@@ -6,6 +6,8 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
 
 import com.intc_service.confrimationapp.Util.DataStructureUtil;
 import com.intc_service.confrimationapp.Util.alertDialogUtil;
@@ -15,7 +17,8 @@ import com.intc_service.confrimationapp.Util.alertDialogUtil;
 */
 
 public class WaitActivity extends AppCompatActivity
-        implements TransmissionFragment.TransmissionFragmentListener, ReceptionFragment.ReceptionFragmentListener {
+        implements TransmissionFragment.TransmissionFragmentListener, ReceptionFragment.ReceptionFragmentListener,
+        View.OnClickListener{
     private static final String TAG_TRANS = "No_UI_Fragment1";
     private static final String TAG_RECEP = "No_UI_Fragment2";
 
@@ -28,10 +31,16 @@ public class WaitActivity extends AppCompatActivity
     private String mPanelNo = "0";        // 画面番号
     private boolean mRecieved = false;  // 手順書データ受信
     private String mProcedure;
+
+    private Button mBtnUpdate;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wait);
+
+        // 画面更新ボタン
+        mBtnUpdate = (Button) findViewById(R.id.btn_update);
+        mBtnUpdate.setOnClickListener(this);
 
         // [P] 起動電文を作成
         DataStructureUtil ds = new DataStructureUtil();
@@ -79,6 +88,10 @@ public class WaitActivity extends AppCompatActivity
                 mRecieved = true;  // 手順書受信済みを設定
             }
             onFinishRecieveProgress(data);   // 受信状況判定
+        }else if (cmd.equals("9N")) {  // 画面更新（正常）
+            // 受信待機済みのため 何もしない
+        }else if (cmd.equals("9Q")) {  // 画面更新（異常）
+            // 受信待機済みのため 何もしない
         }else if (cmd.equals("9C")) {  // 電源OFF画面
             Intent intent = new Intent(this, EndOffActivity.class);
             startActivity(intent);
@@ -143,7 +156,7 @@ public class WaitActivity extends AppCompatActivity
             System.out.println("※※※※　受信タイムアウト ※※※");
             alertDialogUtil.show(this, null, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
         }else {
-            //System.out.println(mPanelNo+":"+mRecieved);
+
             if (mPanelNo.equals("0") && mRecieved) {
                 // 画面番号が "0:指示待ち画面で、手順書受信済みの時 サーバーからの通知を待つ
                 recieveFragment.listen();
@@ -164,5 +177,18 @@ public class WaitActivity extends AppCompatActivity
             }
         }
 
+    }
+
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+
+        switch (id){
+            case R.id.btn_update: // 画面更新ボタンクリック
+                // サーバーへ画面更新[90]送信
+                DataStructureUtil dsHelper = new DataStructureUtil();
+                String mData = dsHelper.makeSendData("90", "");
+                sendFragment.send(mData);
+        }
     }
 }

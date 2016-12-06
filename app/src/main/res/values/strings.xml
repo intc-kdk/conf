@@ -3,8 +3,8 @@
 
     <string name="S01_message_text">指示者の「開始」命令を待っています</string>
 
-    <string name="genbasai_text_add">指示者から手順の追加が指示されています。確認ができたら現場差異を押してください。</string>
-    <string name="genbasai_text_skip">指示者から手順のスキップを指示されています。確認ができたら現場差異を押してください。</string>
+    <string name="genbasai_text_add">指示者から手順の追加が指示されています。\n確認ができたら現場差異を押してください。</string>
+    <string name="genbasai_text_skip">指示者から手順のスキップを指示されています。\n確認ができたら現場差異を押してください。</string>
 
     <string name="nw_err_title">サーバと通信できません。</string>
     <string name="nw_err_message">リトライします。</string>

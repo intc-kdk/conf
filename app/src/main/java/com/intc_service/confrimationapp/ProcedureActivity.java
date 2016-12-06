@@ -34,6 +34,7 @@ public class ProcedureActivity extends AppCompatActivity
 
     private String mGs = "0";
     private Button mBtnGs;
+    private Button mBtnUpdate;
     private boolean noTap;
     private boolean endProcedure;
 
@@ -67,6 +68,10 @@ public class ProcedureActivity extends AppCompatActivity
         // 現場差異ボタン
         mBtnGs = (Button) findViewById(R.id.btn_gs);
         mBtnGs.setOnClickListener(this);
+
+        // 画面更新ボタン
+        mBtnUpdate = (Button) findViewById(R.id.btn_update);
+        mBtnUpdate.setOnClickListener(this);
 
         // 現場差異の指示を確認
         String gsmode = checkGsmode();
@@ -147,6 +152,12 @@ public class ProcedureActivity extends AppCompatActivity
                     }
                 }
                 break;
+            case R.id.btn_update: // 画面更新ボタンクリック
+                // サーバーへ画面更新[90]送信
+                DataStructureUtil dsHelper = new DataStructureUtil();
+                String mData = dsHelper.makeSendData("90", "");
+                sendFragment.send(mData);
+                break;
         }
     }
 
@@ -218,6 +229,10 @@ public class ProcedureActivity extends AppCompatActivity
             }
         }else if (cmd.equals("6R")) { //現場差異応答(拒否）
             noTap = true; //連続タップ抑止解除
+        }else if (cmd.equals("9N")) {  // 画面更新（正常）
+            // 受信待機済みのため 何もしない
+        }else if (cmd.equals("9Q")) {  // 画面更新（異常）
+            // 受信待機済みのため 何もしない
         }else if (cmd.equals("9C")) {  // 電源OFF画面
             Intent intent = new Intent(this, EndOffActivity.class);
             startActivity(intent);

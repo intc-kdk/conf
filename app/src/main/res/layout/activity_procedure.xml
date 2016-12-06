@@ -126,20 +126,44 @@
             android:layout_width="match_parent"
             android:layout_height="107dp">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/text_message"
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@color/colorText"
-                android:height="100dp"
-                android:textColor="#FF0000"
-                android:textSize="30sp"
-                android:textAlignment="center"
-                android:paddingTop="5dp"
-                android:paddingBottom="5dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp" />
+                android:background="@color/colorText">
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:id="@+id/text_message"
+                    android:layout_weight="1"
+                    android:background="@color/colorText"
+                    android:height="100dp"
+                    android:textColor="#FF0000"
+                    android:textSize="28sp"
+                    android:textAlignment="center"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:layout_width="700dp" />
+
+                <Button
+                    android:text="画面更新"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/btn_update"
+                    android:layout_gravity="right"
+                    android:textSize="30sp"
+                    android:width="70dp"
+                    android:height="80dp"
+                    android:textColor="@color/colorTextBlack"
+                    android:background="@drawable/bg_diff_on"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginRight="2dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp" />
+            </FrameLayout>
+
         </LinearLayout>
     </LinearLayout>
 
