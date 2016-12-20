@@ -72,7 +72,7 @@ public class ProcedureActivity extends AppCompatActivity
         // 画面更新ボタン
         mBtnUpdate = (Button) findViewById(R.id.btn_update);
         mBtnUpdate.setOnClickListener(this);
-
+        mBtnUpdate.setVisibility(View.INVISIBLE);
         // 現場差異の指示を確認
         String gsmode = checkGsmode();
         if(gsmode.equals("5")) {  // スキップ
@@ -346,7 +346,7 @@ public class ProcedureActivity extends AppCompatActivity
     public void onFinishRecieveProgress(String data) {
         // サーバー発呼のコマンド送受信後の処理
         DataStructureUtil dsHelper = new DataStructureUtil();
-
+        mBtnUpdate.setVisibility(View.INVISIBLE);
         String cmd = dsHelper.setRecievedData(data);  // データ構造のヘルパー 受信データを渡す。戻り値はコマンド
 
         Bundle bdRecievedData = dsHelper.getRecievedData();  // 渡したデータを解析し、Bundleを返す
@@ -373,11 +373,13 @@ public class ProcedureActivity extends AppCompatActivity
         } else if (cmd.equals("91")) {  // 受信エラー処理
             System.out.println("※※※※　受信エラー ※※※");
             alertDialogUtil.show(this, null, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
+            mBtnUpdate.setVisibility(View.VISIBLE);
             //想定外コマンドの時も受信待機は継続
             recieveFragment.listen();
         } else if (cmd.equals("92")) {  // タイムアウト
             System.out.println("※※※※　受信タイムアウト ※※※");
             alertDialogUtil.show(this, null, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
+            mBtnUpdate.setVisibility(View.VISIBLE);
             //想定外コマンドの時も受信待機は継続
             recieveFragment.listen();
         } else {

@@ -42,6 +42,7 @@ public class WaitActivity extends AppCompatActivity
         // 画面更新ボタン
         mBtnUpdate = (Button) findViewById(R.id.btn_update);
         mBtnUpdate.setOnClickListener(this);
+        mBtnUpdate.setVisibility(View.INVISIBLE);
         noTap=true;
 
         // [P] 起動電文を作成
@@ -154,11 +155,15 @@ public class WaitActivity extends AppCompatActivity
         }else if (cmd.equals("91")) {  // 受信エラー処理
             System.out.println("※※※※　受信エラー ※※※");
             alertDialogUtil.show(this, null, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
+            mBtnUpdate.setVisibility(View.VISIBLE);
+            recieveFragment.listen();
         } else if (cmd.equals("92")) {  // タイムアウト
             System.out.println("※※※※　受信タイムアウト ※※※");
             alertDialogUtil.show(this, null, getResources().getString(R.string.nw_err_title),getResources().getString(R.string.nw_err_message));
+            mBtnUpdate.setVisibility(View.VISIBLE);
+            recieveFragment.listen();
         }else {
-
+            mBtnUpdate.setVisibility(View.INVISIBLE);
             if (mPanelNo.equals("0") && mRecieved) {
                 // 画面番号が "0:指示待ち画面で、手順書受信済みの時 サーバーからの通知を待つ
                 recieveFragment.listen();
@@ -195,5 +200,8 @@ public class WaitActivity extends AppCompatActivity
                     noTap=false; // 連続タップ防止のフラグ
                 }
         }
+    }
+    private void showResendButton(){
+
     }
 }
