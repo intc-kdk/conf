@@ -96,6 +96,7 @@ public class OperationRecyclerViewAdapter extends RecyclerView.Adapter<Operation
         }else if(mValues.get(position).bo_gs.equals("True")){
             mListener.onListItemClick(mValues.get(position));
         }
+
     }
     @Override
     public int getItemCount() {
@@ -125,10 +126,10 @@ public class OperationRecyclerViewAdapter extends RecyclerView.Adapter<Operation
             mAfterView.setOnClickListener(this);  // 操作ボタン（右）へのリスナー設定
         }
         public void onClick(View view){
-            if(noTap) {
+            //if(noTap) {
                 mAdapter.onButtonClick(mView, getAdapterPosition());
                 noTap = false;
-            }
+            //}
         }
 
         @Override
