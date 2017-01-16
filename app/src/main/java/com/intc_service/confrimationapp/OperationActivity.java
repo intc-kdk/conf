@@ -177,15 +177,17 @@ public class OperationActivity extends AppCompatActivity
         System.out.println("CLICK!:"+item.in_sno);
 
         if(mGs.equals("0")) { // 現場差異がなしの時
-            // コマンド[22]送信
-            DataStructureUtil ds = new DataStructureUtil();
-            String mData = ds.makeSendData("22", "{\"手順書番号\":\"" + String.valueOf(item.in_sno) + "\"}");
+            if(noTap) {
+                // コマンド[22]送信
+                DataStructureUtil ds = new DataStructureUtil();
+                String mData = ds.makeSendData("22", "{\"手順書番号\":\"" + String.valueOf(item.in_sno) + "\"}");
 
-            returnSno = item.in_sno;
-            returnGs = item.bo_gs;
-            returnTxGs = item.tx_gs;
-            sendFragment.send(mData);
-
+                returnSno = item.in_sno;
+                returnGs = item.bo_gs;
+                returnTxGs = item.tx_gs;
+                sendFragment.send(mData);
+                noTap = false;// 連続タップ防止のフラグ
+            }
         }
 
     }
